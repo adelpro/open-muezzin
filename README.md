@@ -1,33 +1,34 @@
-This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
+# Open Muezzin
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#) [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=fff)](#) [![Plasmo](https://img.shields.io/badge/Plasmo-F4A261?logo=plasmo&logoColor=fff)](#)
+
+Open-Muezzin is an open-source platform and extension that provides accurate prayer times and location-based Athan notifications, with no tracking, no ads, and universal support for most browsers.
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies:**
 
-```bash
-pnpm dev
-# or
-npm run dev
-```
+    ```bash
+    pnpm install
+    ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+2. **Start the development server:**
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+    ```bash
+    pnpm dev
+    ```
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+3. **Load the extension in your browser:**
+    - Open your browser's extension management page.
+    - Enable "Developer mode".
+    - Click "Load unpacked" and select the `build/chrome-mv3-dev` directory (or the appropriate one for your browser).
 
-## Making production build
+## Build for Production
 
-Run the following:
+To create a production-ready build, run:
 
 ```bash
 pnpm build
-# or
-npm run build
 ```
 
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
-
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+This will create a production bundle in the `build` directory, which you can then package and publish.
