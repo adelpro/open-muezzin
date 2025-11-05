@@ -5,4 +5,7 @@ export type PrayerTimesData = {
   asr: Date
   maghrib: Date
   isha: Date
+  currentPrayer?: string
+  nextPrayer?: string
+  remaining?: string
 }
