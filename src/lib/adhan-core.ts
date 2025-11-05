@@ -1,6 +1,6 @@
-import { Coordinates, CalculationMethod, PrayerTimes, Qibla } from 'adhan'
+import { Coordinates, CalculationMethod, PrayerTimes, Qibla } from "adhan"
 
-export interface PrayerData {
+export type PrayerData = {
   times: Record<string, Date>
   qiblaDirection: number
 }
@@ -26,8 +26,8 @@ export function getPrayerData(
       dhuhr: prayerTimes.dhuhr,
       asr: prayerTimes.asr,
       maghrib: prayerTimes.maghrib,
-      isha: prayerTimes.isha,
+      isha: prayerTimes.isha
     },
-    qiblaDirection: qibla,
+    qiblaDirection: qibla
   }
 }

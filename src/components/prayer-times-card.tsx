@@ -1,53 +1,52 @@
-import type { PrayerTimesData } from '@/types/prayer-times-data.js'
-import { Clock, Compass } from 'lucide-react'
+import React from "react"
+import { Clock, Sun, Sunrise, Sunset, Moon } from "lucide-react"
+import type { PrayerTimesData } from "@/types/prayer-times-data.js"
 
-type Props = {
-  data: PrayerTimesData
+type PrayerTimesCardProps = {
+  times: PrayerTimesData
+  location: string
+  date: string
 }
 
-export function PrayerTimesCard({ data }: Props) {
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+export function PrayerTimesCard({
+  times,
+  location,
+  date
+}: PrayerTimesCardProps) {
+  const icons: Record<string, JSX.Element> = {
+    fajr: <Moon size={18} />,
+    sunrise: <Sunrise size={18} />,
+    dhuhr: <Sun size={18} />,
+    asr: <Clock size={18} />,
+    maghrib: <Sunset size={18} />,
+    isha: <Moon size={18} />
+  }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-green-800 to-emerald-500 p-4 shadow-lg text-white">
-      <h2 className="mb-3 text-center text-xl font-semibold">Prayer Times</h2>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="flex items-center justify-between">
-          <span>Fajr</span>
-          <span>{formatTime(data.fajr)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Sunrise</span>
-          <span>{formatTime(data.sunrise)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Dhuhr</span>
-          <span>{formatTime(data.dhuhr)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Asr</span>
-          <span>{formatTime(data.asr)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Maghrib</span>
-          <span>{formatTime(data.maghrib)}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span>Isha</span>
-          <span>{formatTime(data.isha)}</span>
-        </div>
-      </div>
+    <div className="w-full max-w-md p-5 mx-auto bg-white border border-gray-200 shadow-sm rounded-2xl">
+      <header className="mb-3 text-center">
+        <h2 className="text-lg font-semibold">Prayer Times</h2>
+        <p className="text-sm text-gray-500">{`${location} • ${date}`}</p>
+      </header>
 
-      <div className="mt-4 flex items-center justify-center gap-2 text-sm">
-        <Compass size={16} />
-        <span>Qibla: {Math.round(data.qiblaDirection)}°</span>
-      </div>
-
-      <div className="mt-2 flex items-center justify-center gap-2 text-xs opacity-80">
-        <Clock size={14} />
-        <span>{new Date().toLocaleDateString()}</span>
-      </div>
+      <ul className="grid grid-cols-2 gap-3">
+        {Object.entries(times).map(([key, value]) => (
+          <li
+            key={key}
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-gray-50">
+            <div className="flex items-center gap-2 capitalize">
+              {icons[key] || <Clock size={18} />}
+              <span className="font-medium">{key}</span>
+            </div>
+            <span className="font-mono text-sm text-gray-700">
+              {new Date(value).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
