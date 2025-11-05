@@ -1,7 +1,7 @@
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', 'react', 'simple-import-sort', 'tailwindcss'],
+    plugins: ['@typescript-eslint', 'react', 'tailwindcss'],
     extends: [
         'plugin:@typescript-eslint/recommended',
         'plugin:react/recommended',
@@ -9,7 +9,6 @@ module.exports = {
         'prettier'
     ],
     rules: {
-        'simple-import-sort/imports': 'error',
-        'simple-import-sort/exports': 'error'
+
     }
 }

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { Coordinates, CalculationMethod, PrayerTimes, Qibla } from "adhan"
 import type { PrayerTimesData } from "@/types/prayer-times-data.js"
+import { CalculationMethod, Coordinates, PrayerTimes, Qibla } from "adhan"
+import { useEffect, useState } from "react"
 
 /**
  * Hook to calculate daily prayer times and qibla direction
@@ -24,8 +24,7 @@ export function usePrayerTimes(location: Coordinates | null) {
       dhuhr: times.dhuhr,
       asr: times.asr,
       maghrib: times.maghrib,
-      isha: times.isha,
-      qiblaDirection: qibla
+      isha: times.isha
     })
   }, [location])
 

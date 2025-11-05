@@ -1,17 +1,26 @@
 import { usePrayerTimes } from "@/hooks/use-prayer-times.js"
 import type { Coordinates } from "adhan"
+import React from "react"
+
 import { PrayerTimesCard } from "./prayer-times-card.jsx"
 
 interface PrayerTimesSectionProps {
   location: Coordinates | null
   address?: string
+  error?: string | null
 }
 
 export function PrayerTimesSection({
   location,
-  address
+  address,
+  error
 }: PrayerTimesSectionProps) {
   const times = usePrayerTimes(location)
+
+  if (error)
+    return (
+      <div className="p-4 text-center text-red-500">Location access denied</div>
+    )
 
   if (!location)
     return (
@@ -33,5 +42,14 @@ export function PrayerTimesSection({
     month: "long"
   })
 
-  return <PrayerTimesCard times={times} location={address} date={today} />
+  return (
+    <div className="w-full max-w-sm mx-auto">
+      <PrayerTimesCard
+        times={times}
+        location={address || "Unknown location"}
+        date={today}
+        coordinates={location}
+      />
+    </div>
+  )
 }

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react"
-import type { Coordinates } from "adhan"
 import { PrayerTimesSection } from "@/components/prayer-times-section.jsx"
+import type { Coordinates } from "adhan"
+import React, { useEffect, useState } from "react"
+
+import "@/styles.css"
 
 export default function IndexPopup() {
   const [location, setLocation] = useState<Coordinates | null>(null)
@@ -66,9 +68,9 @@ export default function IndexPopup() {
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center w-[600px] h-[500px] bg-gray-950 text-white">
+    <div className="flex flex-col items-center justify-center w-[400px] h-[400px]">
       {status === "loading" && (
-        <div className="text-center text-gray-400">Detecting location...</div>
+        <div className="text-center text-gray-800">Detecting location...</div>
       )}
 
       {status === "idle" && (
