@@ -1,9 +1,10 @@
 import { PrayerTimesSection } from "@/components/prayer-times-section.jsx"
 import type { Coordinates } from "adhan"
-import { Settings } from "lucide-react"
 import React, { useEffect, useState } from "react"
 
 import "@/styles.css"
+
+import { PrayerTimesSkeleton } from "@/components/prayer-times-skeleton"
 
 export default function IndexPopup() {
   const [location, setLocation] = useState<Coordinates | null>(null)
@@ -12,7 +13,6 @@ export default function IndexPopup() {
   const [status, setStatus] = useState<"idle" | "loading" | "error" | "ready">(
     "idle"
   )
-
   const reverseGeocode = async (coords: Coordinates) => {
     try {
       const response = await fetch(
@@ -70,19 +70,7 @@ export default function IndexPopup() {
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
-      {/* Top-right settings button */}
-      <button
-        onClick={() => {
-          chrome.tabs.create({ url: chrome.runtime.getURL("settings.html") })
-          window.close() // close popup after opening settings
-        }}
-        className="absolute top-3 right-3 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-        title="Open Settings">
-        <Settings size={20} className="text-gray-600 dark:text-gray-300" />
-      </button>
-      {status === "loading" && (
-        <div className="text-center text-gray-800">Detecting location...</div>
-      )}
+      {status === "loading" && <PrayerTimesSkeleton />}
 
       {status === "idle" && (
         <div className="text-center">
@@ -91,7 +79,7 @@ export default function IndexPopup() {
           </p>
           <button
             onClick={requestLocation}
-            className="px-4 py-2 mt-4 text-white transition bg-blue-600 rounded hover:bg-blue-700">
+            className="px-4 py-2 mt-4 text-white bg-blue-600 rounded transition hover:bg-blue-700">
             Allow Location Access
           </button>
         </div>

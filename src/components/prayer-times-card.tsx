@@ -1,11 +1,11 @@
+import { cn } from "@/lib/cn"
 import { useSettingsStore } from "@/stores/settings-store"
 import type { PrayerTimesData } from "@/types/prayer-times-data.js"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
 import { Clock, Moon, Sun, Sunrise, Sunset } from "lucide-react"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 type PrayerTimesCardProps = {
-  times: PrayerTimesData
   location: string
   date: string
   coordinates: Coordinates
@@ -13,14 +13,12 @@ type PrayerTimesCardProps = {
 }
 
 export function PrayerTimesCard({
-  times,
   location,
   date,
   coordinates,
   currentWindowMinutes = 15
 }: PrayerTimesCardProps) {
-  const { calculationMethod, manualLocation, useManualLocation } =
-    useSettingsStore()
+  const { calculationMethod, manualLocation, autoLocation } = useSettingsStore()
   const method = CalculationMethod[calculationMethod]()
 
   const icons: Record<string, JSX.Element> = {
@@ -35,37 +33,42 @@ export function PrayerTimesCard({
   const prayerOrder = ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"]
   const [now, setNow] = useState(new Date())
 
-  // Update clock every second
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(interval)
   }, [])
 
-  // TODO: Replace with actual manual coordinates from reverse geocoding
-  const activeCoordinates = useManualLocation ? coordinates : coordinates
+  const activeCoordinates: Coordinates = autoLocation
+    ? coordinates
+    : manualLocation?.coordinates || coordinates
 
-  // Helper to create PrayerTimes
-  const getPrayerTimesForDate = (date: Date) =>
-    new PrayerTimes(activeCoordinates, date, method)
+  const times: PrayerTimesData = useMemo(() => {
+    const today = new Date()
+    const prayerTimes = new PrayerTimes(activeCoordinates, today, method)
+    return {
+      fajr: prayerTimes.fajr,
+      sunrise: prayerTimes.sunrise,
+      dhuhr: prayerTimes.dhuhr,
+      asr: prayerTimes.asr,
+      maghrib: prayerTimes.maghrib,
+      isha: prayerTimes.isha
+    }
+  }, [activeCoordinates, method])
 
-  // Build today's prayers + next-day Fajr
-  const buildPrayerList = () => {
-    const todayPrayers = prayerOrder.map((prayer) => ({
+  const prayers = useMemo(() => {
+    const list = prayerOrder.map((prayer) => ({
       name: prayer,
       time: times[prayer as keyof PrayerTimesData] as Date
     }))
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    todayPrayers.push({
+    list.push({
       name: "fajr",
-      time: getPrayerTimesForDate(tomorrow).fajr
+      time: new PrayerTimes(activeCoordinates, tomorrow, method).fajr
     })
-    return todayPrayers
-  }
+    return list
+  }, [times, activeCoordinates, method])
 
-  const prayers = buildPrayerList()
-
-  // Determine current and next prayer
   let currentPrayer: { name: string; time: Date } | null = null
   let nextPrayer: { name: string; time: Date } | null = null
 
@@ -88,7 +91,10 @@ export function PrayerTimesCard({
   if (!currentPrayer && !nextPrayer) {
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    nextPrayer = { name: "fajr", time: getPrayerTimesForDate(tomorrow).fajr }
+    nextPrayer = {
+      name: "fajr",
+      time: new PrayerTimes(activeCoordinates, tomorrow, method).fajr
+    }
   }
 
   const getCountdown = (target: Date) => {
@@ -108,48 +114,58 @@ export function PrayerTimesCard({
 
   return (
     <>
-      <div className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-lg p-4 text-gray-900 dark:text-gray-100">
+      <div className="p-4 w-full text-gray-900 bg-white rounded-2xl border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100">
         <ul className="divide-y divide-gray-100 dark:divide-gray-800">
           {prayerOrder.map((prayer) => {
             const time = times[prayer as keyof PrayerTimesData] as Date
             const isCurrent = currentPrayer?.name === prayer
             const isNext = nextPrayer?.name === prayer
 
-            const middleTimer = isCurrent
-              ? getCountdown(
-                  new Date(time.getTime() + currentWindowMinutes * 60 * 1000)
-                )
-              : isNext
-                ? getCountdown(nextPrayer!.time)
-                : ""
+            const prayerTime = time.getTime()
+            const diff = now.getTime() - prayerTime
+            const withinWindow =
+              Math.abs(diff) <= currentWindowMinutes * 60 * 1000
+
+            const prefix = diff < 0 ? "−" : "+"
+
+            let timerDisplay = null
+
+            if (withinWindow) {
+              timerDisplay = (
+                <span className="px-3 py-1 font-mono text-xs text-white rounded-full shadow bg-primary">
+                  {prefix}
+                  {getCountdown(
+                    new Date(
+                      prayerTime +
+                        (diff < 0 ? 0 : currentWindowMinutes * 60 * 1000)
+                    )
+                  )}
+                </span>
+              )
+            } else if (isNext) {
+              timerDisplay = (
+                <span className="px-3 py-1 font-mono text-xs rounded-full bg-accent/20 text-accent">
+                  −{getCountdown(nextPrayer!.time)}
+                </span>
+              )
+            }
 
             return (
               <li
                 key={prayer}
-                className={`flex items-center justify-between py-3 px-3 rounded-xl transition-colors ${
-                  isCurrent
-                    ? "bg-primary/10 text-primary font-semibold shadow-sm ring-1 ring-primary/20"
-                    : ""
-                }`}>
-                <div className="flex items-center gap-2 capitalize w-20">
+                className={cn(
+                  "flex items-center justify-between py-3 px-3 rounded-xl transition-colors",
+                  isCurrent &&
+                    "font-semibold ring-1 shadow-sm bg-primary/10 text-primary ring-primary/20"
+                )}>
+                <div className="flex gap-2 items-center w-20 capitalize">
                   {icons[prayer] || <Clock size={18} />}
                   <span>{prayer}</span>
                 </div>
 
-                <div className="flex-1 flex justify-center">
-                  {middleTimer && (
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-mono ${
-                        isCurrent
-                          ? "bg-primary text-white shadow"
-                          : "bg-accent/20 text-accent"
-                      }`}>
-                      {middleTimer}
-                    </span>
-                  )}
-                </div>
+                <div className="flex flex-1 justify-center">{timerDisplay}</div>
 
-                <span className="font-mono w-16 text-right text-gray-700 dark:text-gray-300">
+                <span className="w-16 font-mono text-right text-gray-700 dark:text-gray-300">
                   {time.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit"
@@ -161,8 +177,13 @@ export function PrayerTimesCard({
         </ul>
       </div>
 
-      <footer className="mt-3 text-center text-xs text-gray-500 dark:text-gray-500">
-        {location} • {date}
+      <footer className="mt-3 text-xs text-center text-gray-500 dark:text-gray-500">
+        {autoLocation
+          ? location
+          : manualLocation?.city
+            ? `${manualLocation.city} (manual)`
+            : location}{" "}
+        • {date}
       </footer>
     </>
   )

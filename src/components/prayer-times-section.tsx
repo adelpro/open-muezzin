@@ -43,9 +43,8 @@ export function PrayerTimesSection({
   })
 
   return (
-    <div className="w-full max-w-sm mx-auto">
+    <div className="mx-auto w-full max-w-sm">
       <PrayerTimesCard
-        times={times}
         location={address || "Unknown location"}
         date={today}
         coordinates={location}
