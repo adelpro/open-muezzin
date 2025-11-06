@@ -1,3 +1,4 @@
+import { useSettingsStore } from "@/stores/settings-store"
 import type { PrayerTimesData } from "@/types/prayer-times-data.js"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
 import { Clock, Moon, Sun, Sunrise, Sunset } from "lucide-react"
@@ -18,6 +19,10 @@ export function PrayerTimesCard({
   coordinates,
   currentWindowMinutes = 15
 }: PrayerTimesCardProps) {
+  const { calculationMethod, manualLocation, useManualLocation } =
+    useSettingsStore()
+  const method = CalculationMethod[calculationMethod]()
+
   const icons: Record<string, JSX.Element> = {
     fajr: <Moon size={18} />,
     sunrise: <Sunrise size={18} />,
@@ -30,12 +35,20 @@ export function PrayerTimesCard({
   const prayerOrder = ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"]
   const [now, setNow] = useState(new Date())
 
+  // Update clock every second
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(interval)
   }, [])
 
-  // Build prayers array including next-day Fajr
+  // TODO: Replace with actual manual coordinates from reverse geocoding
+  const activeCoordinates = useManualLocation ? coordinates : coordinates
+
+  // Helper to create PrayerTimes
+  const getPrayerTimesForDate = (date: Date) =>
+    new PrayerTimes(activeCoordinates, date, method)
+
+  // Build today's prayers + next-day Fajr
   const buildPrayerList = () => {
     const todayPrayers = prayerOrder.map((prayer) => ({
       name: prayer,
@@ -43,12 +56,10 @@ export function PrayerTimesCard({
     }))
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const nextDayFajr = new PrayerTimes(
-      coordinates,
-      tomorrow,
-      CalculationMethod.MuslimWorldLeague()
-    ).fajr
-    todayPrayers.push({ name: "fajr", time: nextDayFajr })
+    todayPrayers.push({
+      name: "fajr",
+      time: getPrayerTimesForDate(tomorrow).fajr
+    })
     return todayPrayers
   }
 
@@ -75,27 +86,21 @@ export function PrayerTimesCard({
   }
 
   if (!currentPrayer && !nextPrayer) {
-    // after Isha, next prayer is tomorrow Fajr
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const nextDayFajr = new PrayerTimes(
-      coordinates,
-      tomorrow,
-      CalculationMethod.MuslimWorldLeague()
-    ).fajr
-    nextPrayer = { name: "fajr", time: nextDayFajr }
+    nextPrayer = { name: "fajr", time: getPrayerTimesForDate(tomorrow).fajr }
   }
 
   const getCountdown = (target: Date) => {
     const diffMs = target.getTime() - now.getTime()
-    if (diffMs <= 0) return "0m 00s" // keep seconds always visible
+    if (diffMs <= 0) return "0m 00s"
     const hours = Math.floor(diffMs / 3600000)
     const minutes = Math.floor((diffMs % 3600000) / 60000)
     const seconds = Math.floor((diffMs % 60000) / 1000)
     return [
       hours > 0 ? `${hours}h` : "",
       `${minutes}m`,
-      `${seconds.toString().padStart(2, "0")}s` // always 2 digits
+      `${seconds.toString().padStart(2, "0")}s`
     ]
       .filter(Boolean)
       .join(" ")
@@ -110,15 +115,13 @@ export function PrayerTimesCard({
             const isCurrent = currentPrayer?.name === prayer
             const isNext = nextPrayer?.name === prayer
 
-            let middleTimer = ""
-            if (isCurrent) {
-              const windowEnd = new Date(
-                time.getTime() + currentWindowMinutes * 60 * 1000
-              )
-              middleTimer = getCountdown(windowEnd)
-            } else if (isNext) {
-              middleTimer = getCountdown(nextPrayer!.time)
-            }
+            const middleTimer = isCurrent
+              ? getCountdown(
+                  new Date(time.getTime() + currentWindowMinutes * 60 * 1000)
+                )
+              : isNext
+                ? getCountdown(nextPrayer!.time)
+                : ""
 
             return (
               <li

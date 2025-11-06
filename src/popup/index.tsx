@@ -1,5 +1,6 @@
 import { PrayerTimesSection } from "@/components/prayer-times-section.jsx"
 import type { Coordinates } from "adhan"
+import { Settings } from "lucide-react"
 import React, { useEffect, useState } from "react"
 
 import "@/styles.css"
@@ -68,7 +69,17 @@ export default function IndexPopup() {
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center w-[400px] h-[400px]">
+    <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
+      {/* Top-right settings button */}
+      <button
+        onClick={() => {
+          chrome.tabs.create({ url: chrome.runtime.getURL("settings.html") })
+          window.close() // close popup after opening settings
+        }}
+        className="absolute top-3 right-3 p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+        title="Open Settings">
+        <Settings size={20} className="text-gray-600 dark:text-gray-300" />
+      </button>
       {status === "loading" && (
         <div className="text-center text-gray-800">Detecting location...</div>
       )}
