@@ -1,20 +1,29 @@
-// background/prayer-badge.ts
 import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
 
 // === CONFIG ===
 const BADGE_COLOR = "#22c55e" // green
-const CURRENT_WINDOW_MINUTES = 15
-const CHECK_INTERVAL_MINUTES = 1 // run every 1 minute
+const CURRENT_WINDOW_MINUTES = 15 // 15 minutes around prayer time
+const CHECK_INTERVAL_MINUTES = 1 // run every minute
+
+const PRAYER_ORDER = ["fajr", "dhuhr", "asr", "maghrib", "isha"] as const
+
+const PRAYER_ARABIC: Record<string, string> = {
+  fajr: "ف",
+  dhuhr: "ظ", // or "ذ" if you prefer
+  asr: "ع",
+  maghrib: "م",
+  isha: "ش"
+}
 
 // Helper: show badge
-function showBadge() {
+function showBadge(text: string) {
   const action = chrome.action || chrome.browserAction
   if (!action) return
 
   try {
-    action.setBadgeBackgroundColor({ color: BADGE_COLOR }) // green
-    action.setBadgeText({ text: "●" }) // single dot
+    action.setBadgeBackgroundColor({ color: BADGE_COLOR })
+    action.setBadgeText({ text })
   } catch (err) {
     console.warn("Badge not supported", err)
   }
@@ -39,25 +48,24 @@ async function updatePrayerBadge() {
   const method = CalculationMethod.MuslimWorldLeague()
 
   const prayerTimes = new PrayerTimes(coordinates, now, method)
-  const prayers: Date[] = [
-    prayerTimes.fajr,
-    prayerTimes.dhuhr,
-    prayerTimes.asr,
-    prayerTimes.maghrib,
-    prayerTimes.isha
-  ]
+  const prayers = PRAYER_ORDER.map((name) => ({
+    name,
+    time: prayerTimes[name as keyof typeof prayerTimes] as Date
+  }))
 
-  const isWithinWindow = prayers.some(
-    (time) =>
+  const currentPrayer = prayers.find(
+    ({ time }) =>
       Math.abs(now.getTime() - time.getTime()) <=
       CURRENT_WINDOW_MINUTES * 60 * 1000
   )
 
-  if (isWithinWindow) {
-    showBadge()
+  if (currentPrayer) {
+    showBadge(PRAYER_ARABIC[currentPrayer.name])
     chrome.alarms.create("hidePrayerBadge", {
       delayInMinutes: CURRENT_WINDOW_MINUTES
     })
+  } else {
+    hideBadge()
   }
 }
 
