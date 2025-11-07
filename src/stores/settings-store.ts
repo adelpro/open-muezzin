@@ -42,8 +42,10 @@ export const useSettingsStore = create<SettingsState>()(
       twentyFourHourFormat: false,
 
       setCalculationMethod: (method) => set({ calculationMethod: method }),
-      setManualLocation: (location) => set({ manualLocation: location }),
-      setCachedLocation: (location) => set({ cachedLocation: location }),
+      setManualLocation: (location: Location) =>
+        set({ manualLocation: location }),
+      setCachedLocation: (location: Location) =>
+        set({ cachedLocation: location }),
       setAutoLocation: (value) => set({ autoLocation: value }),
       setTwentyFourHourFormat: (value) => set({ twentyFourHourFormat: value })
     }),
