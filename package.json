@@ -43,7 +43,9 @@
   },
   "manifest": {
     "permissions": [
-      "geolocation"
+      "geolocation",
+      "storage",
+      "alarms"
     ],
     "host_permissions": [
       "https://*/*"

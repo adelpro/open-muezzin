@@ -106,7 +106,7 @@ export default function Options() {
   return (
     <div className="flex items-center justify-center w-full h-svh">
       <div className="relative w-full max-w-md p-6 mx-auto bg-white shadow-lg rounded-2xl">
-        <h1 className="mb-6 text-xl font-bold text-gray-800">
+        <h1 className="w-full mb-6 text-xl font-bold text-center text-gray-800">
           Muezzin Settings
         </h1>
 

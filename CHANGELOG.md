@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added an icon to the extension.
 - Added design system colors.
 - Clean up the code base
+- optimize reverse geocoding with in-memory ref and cachedLocation store
 
 ### Miscellaneous Chores
 

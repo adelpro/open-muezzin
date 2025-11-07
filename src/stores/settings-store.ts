@@ -15,11 +15,16 @@ type Location = {
 export type SettingsState = {
   calculationMethod: keyof typeof CalculationMethod
   manualLocation?: Location
+  cachedLocation?: Location
   autoLocation: boolean
   twentyFourHourFormat?: boolean
 
   setCalculationMethod: (method: keyof typeof CalculationMethod) => void
   setManualLocation: (location: {
+    address: string
+    coordinates: Coordinates
+  }) => void
+  setCachedLocation: (location: {
     address: string
     coordinates: Coordinates
   }) => void
@@ -32,11 +37,13 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       calculationMethod: "MuslimWorldLeague",
       manualLocation: undefined,
+      cachedLocation: undefined,
       autoLocation: true,
       twentyFourHourFormat: false,
 
       setCalculationMethod: (method) => set({ calculationMethod: method }),
       setManualLocation: (location) => set({ manualLocation: location }),
+      setCachedLocation: (location) => set({ cachedLocation: location }),
       setAutoLocation: (value) => set({ autoLocation: value }),
       setTwentyFourHourFormat: (value) => set({ twentyFourHourFormat: value })
     }),
