@@ -8,7 +8,7 @@ type Coordinates = {
 }
 
 type Location = {
-  city: string
+  address: string
   coordinates: Coordinates
 }
 
@@ -16,13 +16,15 @@ export type SettingsState = {
   calculationMethod: keyof typeof CalculationMethod
   manualLocation?: Location
   autoLocation: boolean
+  twentyFourHourFormat?: boolean
 
   setCalculationMethod: (method: keyof typeof CalculationMethod) => void
   setManualLocation: (location: {
-    city: string
+    address: string
     coordinates: Coordinates
   }) => void
   setAutoLocation: (value: boolean) => void
+  setTwentyFourHourFormat: (value: boolean) => void
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -31,10 +33,12 @@ export const useSettingsStore = create<SettingsState>()(
       calculationMethod: "MuslimWorldLeague",
       manualLocation: undefined,
       autoLocation: true,
+      twentyFourHourFormat: false,
 
       setCalculationMethod: (method) => set({ calculationMethod: method }),
       setManualLocation: (location) => set({ manualLocation: location }),
-      setAutoLocation: (value) => set({ autoLocation: value })
+      setAutoLocation: (value) => set({ autoLocation: value }),
+      setTwentyFourHourFormat: (value) => set({ twentyFourHourFormat: value })
     }),
     {
       name: "open-muezzin-settings"

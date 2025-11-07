@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integrated Tailwind CSS for styling.
 - Configured ESLint and Prettier for code quality and consistency.
 - Added an icon to the extension.
-- Added design system colors and gradients.
+- Added design system colors.
+- Clean up the code base
 
 ### Miscellaneous Chores
 

@@ -1,72 +1,25 @@
-import { PrayerTimesSection } from "@/components/prayer-times-section.jsx"
-import type { Coordinates } from "adhan"
-import React, { useEffect, useState } from "react"
+import React from "react"
 
 import "@/styles.css"
 
+import { PrayerTimesCard } from "@/components/prayer-times-card"
 import { PrayerTimesSkeleton } from "@/components/prayer-times-skeleton"
+import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
+import { useLocation } from "@/hooks/use-location" // adjust path if needed
+import { useSettingsStore } from "@/stores/settings-store"
 
 export default function IndexPopup() {
-  const [location, setLocation] = useState<Coordinates | null>(null)
-  const [address, setAddress] = useState<string>("")
-  const [error, setError] = useState<string | null>(null)
-  const [status, setStatus] = useState<"idle" | "loading" | "error" | "ready">(
-    "idle"
-  )
-  const reverseGeocode = async (coords: Coordinates) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}`
-      )
-      const data = await response.json()
-      setAddress(data.address?.city || data.address?.town || "Unknown location")
-    } catch {
-      setAddress("Unknown location")
-    }
-  }
+  // select only autoLocation so the popup doesn't re-render for unrelated store changes
+  const autoLocation = useSettingsStore((s) => s.autoLocation)
 
-  const requestLocation = () => {
-    setStatus("loading")
-    setError(null)
+  const { coordinates, address, status, error, requestLocation } =
+    useLocation(COORDINATES_FALLBACK)
 
-    if (!navigator.geolocation) {
-      setError("Geolocation not supported by your browser.")
-      setStatus("error")
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const coords = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
-        }
-        setLocation(coords)
-        void reverseGeocode(coords)
-        setStatus("ready")
-      },
-      (err) => {
-        setStatus("error")
-        if (err.code === err.PERMISSION_DENIED)
-          setError("Location access blocked. Enable it in browser settings.")
-        else setError("Unable to get location.")
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
-    )
-  }
-
-  useEffect(() => {
-    if (navigator.permissions) {
-      navigator.permissions
-        .query({ name: "geolocation" as PermissionName })
-        .then((perm) => {
-          if (perm.state === "granted") requestLocation()
-          else if (perm.state === "denied")
-            setError("Location access blocked. Enable it in browser settings.")
-        })
-        .catch(() => {})
-    }
-  }, [])
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  })
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
@@ -79,7 +32,7 @@ export default function IndexPopup() {
           </p>
           <button
             onClick={requestLocation}
-            className="px-4 py-2 mt-4 text-white bg-blue-600 rounded transition hover:bg-blue-700">
+            className="px-4 py-2 mt-4 text-white transition rounded bg-prim ry hover:bg-blue-700">
             Allow Location Access
           </button>
         </div>
@@ -98,9 +51,17 @@ export default function IndexPopup() {
         </div>
       )}
 
-      {status === "ready" && location && (
-        <PrayerTimesSection location={location} address={address} />
-      )}
+      {status === "ready" && coordinates && <PrayerTimesCard />}
+
+      {/* Footer */}
+      <footer className="flex flex-col mt-3 space-y-2 text-xs text-center text-gray-500">
+        <span>
+          {autoLocation ? "Auto location" : "Manual location"} • {status} •{" "}
+          {address ||
+            `${coordinates?.latitude?.toFixed?.(3)}, ${coordinates?.longitude?.toFixed?.(3)}`}
+        </span>
+        <span>{today}</span>
+      </footer>
     </div>
   )
 }
