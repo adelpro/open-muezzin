@@ -1,0 +1,1 @@
+export const CURRENT_WINDOW_MINUTES = 15

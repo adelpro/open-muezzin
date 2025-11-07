@@ -12,8 +12,14 @@ export default function IndexPopup() {
   // select only autoLocation so the popup doesn't re-render for unrelated store changes
   const autoLocation = useSettingsStore((s) => s.autoLocation)
 
-  const { coordinates, address, status, error, requestLocation } =
-    useLocation(COORDINATES_FALLBACK)
+  const {
+    coordinates,
+    loadingCoordinates,
+    address,
+    status,
+    error,
+    requestLocation
+  } = useLocation(COORDINATES_FALLBACK)
 
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long",
@@ -23,7 +29,10 @@ export default function IndexPopup() {
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
-      {status === "loading" && <PrayerTimesSkeleton />}
+      {(status === "loading" || loadingCoordinates) && <PrayerTimesSkeleton />}
+      {status === "ready" && !loadingCoordinates && (
+        <PrayerTimesCard coordinates={coordinates} />
+      )}
 
       {status === "idle" && (
         <div className="text-center">
@@ -32,7 +41,7 @@ export default function IndexPopup() {
           </p>
           <button
             onClick={requestLocation}
-            className="px-4 py-2 mt-4 text-white transition rounded bg-prim ry hover:bg-blue-700">
+            className="px-4 py-2 mt-4 text-white rounded transition bg-prim ry hover:bg-blue-700">
             Allow Location Access
           </button>
         </div>
@@ -50,9 +59,6 @@ export default function IndexPopup() {
           </button>
         </div>
       )}
-
-      {status === "ready" && coordinates && <PrayerTimesCard />}
-
       {/* Footer */}
       <footer className="flex flex-col mt-3 space-y-2 text-xs text-center text-gray-500">
         <span>

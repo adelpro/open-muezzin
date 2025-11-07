@@ -27,13 +27,16 @@ module.exports = {
   plugins: [
     function ({ addBase, theme }) {
       addBase({
+        "*": {
+          borderColor: theme("colors.primary"),
+        },
         "input, select, textarea": {
           borderColor: theme("colors.primary"),
         },
         "input[type='checkbox'], input[type='radio']": {
           accentColor: theme("colors.primary"),
         },
-        "input:focus, select:focus, textarea:focus": {
+        "*": {
           ringColor: theme("colors.primary"),
         },
       });
