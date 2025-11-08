@@ -1,0 +1,1 @@
+export const DIR = chrome.i18n.getUILanguage() === "ar" ? "rtl" : "ltr"

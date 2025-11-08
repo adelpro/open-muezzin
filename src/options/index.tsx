@@ -1,5 +1,6 @@
 import "@/styles.css"
 
+import { DIR } from "@/constants/direction"
 import { NOMINATIM_API_URL } from "@/constants/nominate-api-url"
 import { debounce } from "@/lib/debounce"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -21,9 +22,7 @@ export default function Options() {
     setManualLocation,
     setAutoLocation,
     twentyFourHourFormat,
-    setTwentyFourHourFormat,
-    playAdhan,
-    setPlayAdhan
+    setTwentyFourHourFormat
   } = useSettingsStore()
 
   // allow aborting in-flight reverse geocode requests
@@ -47,11 +46,11 @@ export default function Options() {
         setIsLoading(true)
         setError(null)
         setSearchResults(null)
-
+        const lang = chrome.i18n.getUILanguage() || "ar"
         const res = await fetch(
           `${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(
             searchQuery
-          )}&limit=5`,
+          )}&limit=5&accept-language=${lang}`,
           { headers: { "User-Agent": "Open-Muezzin-Extension/1.0" }, signal }
         )
 
@@ -106,15 +105,15 @@ export default function Options() {
   }, [success, error])
 
   return (
-    <div className="flex justify-center items-center w-full h-svh">
+    <div className="flex justify-center items-center w-full h-svh" dir={DIR}>
       <div className="relative p-6 mx-auto w-full max-w-md bg-white rounded-2xl shadow-lg">
         <h1 className="mb-6 w-full text-xl font-bold text-center text-gray-800">
-          Muezzin Settings
+          {chrome.i18n.getMessage("optionsTitle")}
         </h1>
 
         {/* Calculation Method */}
         <label className="block mb-2 font-medium text-gray-700">
-          Calculation Method
+          {chrome.i18n.getMessage("calculationMethod")}
         </label>
         <select
           value={calculationMethod}
@@ -139,7 +138,9 @@ export default function Options() {
             onChange={() => setTwentyFourHourFormat(!twentyFourHourFormat)}
             className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
           />
-          <span className="font-medium text-gray-700">Use 24 Hour Format</span>
+          <span className="font-medium text-gray-700">
+            {chrome.i18n.getMessage("use24HourFormat")}
+          </span>
         </label>
 
         {/* Auto Location Toggle */}
@@ -150,25 +151,16 @@ export default function Options() {
             onChange={() => setAutoLocation(!autoLocation)}
             className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
           />
-          <span className="font-medium text-gray-700">Use Auto Location</span>
-        </label>
-
-        {/* Play Adhan Toggle */}
-        <label className="flex gap-3 items-center mb-4">
-          <input
-            type="checkbox"
-            checked={playAdhan}
-            onChange={() => setPlayAdhan(!playAdhan)}
-            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
-          />
-          <span className="font-medium text-gray-700">Play Adhan</span>
+          <span className="font-medium text-gray-700">
+            {chrome.i18n.getMessage("useAutoLocation")}
+          </span>
         </label>
 
         {/* Manual Location Input - only show when auto-location is off */}
         {!autoLocation && (
           <div className="relative">
             <label className="block mb-2 font-medium text-gray-700">
-              Manual Location (City/Town)
+              {chrome.i18n.getMessage("manualLocationCity")}
             </label>
             <div className="relative">
               <input
@@ -179,7 +171,7 @@ export default function Options() {
                   setSuccess(null)
                   setError(null)
                 }}
-                placeholder="Enter city name"
+                placeholder={chrome.i18n.getMessage("enterCityName")}
                 className="relative z-10 p-2 pr-8 mb-4 w-full rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
@@ -193,7 +185,7 @@ export default function Options() {
                 {isLoading ? (
                   <p className="flex gap-2 items-center p-3 text-sm text-gray-500">
                     <span className="w-3 h-3 rounded-full border-2 border-blue-500 animate-spin border-t-transparent" />
-                    Searching...
+                    {chrome.i18n.getMessage("Searching")}
                   </p>
                 ) : searchResults && searchResults.length > 0 ? (
                   <ul className="overflow-y-auto max-h-60">
@@ -208,7 +200,7 @@ export default function Options() {
                   </ul>
                 ) : (
                   <p className="p-3 text-sm text-gray-500">
-                    No results found for "{cityInput}".
+                    {`${chrome.i18n.getMessage("noResultsFound")} "${cityInput}".`}
                   </p>
                 )}
               </div>
@@ -223,7 +215,7 @@ export default function Options() {
         )}
 
         <p className="mt-5 w-full text-sm text-center text-gray-500">
-          Powered by OpenStreetMap
+          {chrome.i18n.getMessage("poweredBy")}
         </p>
       </div>
     </div>

@@ -22,6 +22,7 @@ export default function IndexPopup() {
     error,
     requestLocation
   } = useLocation(COORDINATES_FALLBACK)
+  console.log("Popup status:", status, coordinates, error)
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
@@ -46,12 +47,12 @@ export default function IndexPopup() {
       {status === "idle" && !loadingCoordinates && (
         <div className="text-center">
           <p className="text-gray-300">
-            Location access is required to show accurate prayer times.
+            {chrome.i18n.getMessage("locationAccessRequired")}
           </p>
           <button
             onClick={requestLocation}
             className="px-4 py-2 mt-4 text-white rounded transition bg-primary-600 hover:bg-primary-500">
-            Allow Location Access
+            {chrome.i18n.getMessage("allowLocationAccess")}
           </button>
         </div>
       )}
@@ -64,7 +65,7 @@ export default function IndexPopup() {
               chrome.tabs.create({ url: "chrome://settings/content/location" })
             }
             className="mt-2 text-sm text-blue-400 underline">
-            Open Location Settings
+            {chrome.i18n.getMessage("openLocationSettings")}
           </button>
         </div>
       )}

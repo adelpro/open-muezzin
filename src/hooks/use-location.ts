@@ -23,8 +23,9 @@ export function useLocation(fallback: Coordinates) {
       lastGeocodedRef.current = key
 
       try {
+        const lang = chrome.i18n.getUILanguage() || "ar"
         const res = await fetch(
-          `${NOMINATIM_API_URL}/reverse?format=json&lat=${coords.latitude}&lon=${coords.longitude}`,
+          `${NOMINATIM_API_URL}/reverse?format=json&accept-language=${lang}&lat=${coords.latitude}&lon=${coords.longitude}`,
           { headers: { "User-Agent": "Open-Muezzin-Extension/1.0" }, signal }
         )
         const data = await res.json()

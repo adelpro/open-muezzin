@@ -30,10 +30,20 @@ function hideBadge() {
 const getCoordinates = async (): Promise<Coordinates | null> => {
   return new Promise((resolve) => {
     chrome.storage.local.get("open-muezzin-settings", (result) => {
-      const coords = result["open-muezzin-settings"]?.cachedCoordinates
-      resolve(coords ?? null)
-    })
-  })
+      const settingsRaw = result["open-muezzin-settings"];
+      if (!settingsRaw) return resolve(null);
+
+      try {
+        const settings = JSON.parse(settingsRaw);
+        const coords = settings.state?.cachedCoordinates ?? null;
+        resolve(coords);
+      } catch (err) {
+        console.error("Failed to parse settings", err);
+        resolve(null);
+      }
+    });
+  });
+
 }
 
 // Prayer Check
@@ -60,22 +70,22 @@ async function updatePrayerBadge() {
   })
 
   if (closestPrayer) {
-    const diffMinutes = Math.round(
+    const diffMinutes = Math.floor(
       (closestPrayer.time.getTime() - now.getTime()) / 60000
     )
     showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
 
-    // Fire notification exactly at prayer time
-    if (diffMinutes === 0) {
-      console.log("Prayer time is 12 minutes away")
-      chrome.notifications.create({
-        type: "basic",
-        iconUrl: chrome.runtime.getURL("assets/icon512.png"),
-        title: "Prayer Time",
-        message: `It's time for ${closestPrayer.name} prayer`,
-        priority: 2
-      })
-    }
+    // TODO Fire notification exactly at prayer time
+
+    /*     console.log("Prayer time notification fired")
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: chrome.runtime.getURL("assets/icon512.png"),
+          title: "Prayer Time",
+          message: `It's time for ${closestPrayer.name} prayer`,
+          priority: 2
+        }) */
+
 
 
   } else {
@@ -84,9 +94,20 @@ async function updatePrayerBadge() {
 }
 
 //Storage Change Listener
+// Storage listener: only triggers on coordinates change
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && changes.cachedCoordinates) {
-    updatePrayerBadge()
+  if (area !== "local") return
+  const change = changes["open-muezzin-settings"]
+  if (!change) return
+
+  try {
+    const oldCoords = change.oldValue?.state?.cachedCoordinates
+    const newCoords = change.newValue?.state?.cachedCoordinates
+    if (JSON.stringify(oldCoords) !== JSON.stringify(newCoords)) {
+      updatePrayerBadge()
+    }
+  } catch {
+    // ignore parse errors
   }
 })
 
@@ -100,3 +121,5 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "checkPrayerBadge") updatePrayerBadge()
 })
 
+// Initial check
+updatePrayerBadge()

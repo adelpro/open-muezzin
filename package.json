@@ -42,11 +42,11 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "default_locale": "ar",
     "permissions": [
       "geolocation",
       "storage",
-      "alarms",
-      "notifications"
+      "alarms"
     ],
     "host_permissions": [
       "https://*/*"

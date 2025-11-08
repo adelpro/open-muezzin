@@ -1,0 +1,110 @@
+{
+  "extensionName": {
+    "message": "Open Muezzin",
+    "description": "Name of the extension."
+  },
+  "extensionDescription": {
+    "message": "Open Muezzin is an open-source browser extension that accurately calculates Islamic prayer times based on your location. It provides precise, location-based Adhan times with no tracking, no ads, and full support across all major browsers.",
+    "description": "Description of the extension."
+  },
+  "Slogan": {
+    "message": "Prayer Times (5)",
+    "description": "Label for slogan."
+  },
+  "fajr": {
+    "message": "Fajr",
+    "description": "Label for Fajr prayer."
+  },
+  "sunrise": {
+    "message": "Sunrise",
+    "description": "Label for Sunrise time."
+  },
+  "dhuhr": {
+    "message": "Dhuhr",
+    "description": "Label for Dhuhr prayer."
+  },
+  "asr": {
+    "message": "Asr",
+    "description": "Label for Asr prayer."
+  },
+  "maghrib": {
+    "message": "Maghrib",
+    "description": "Label for Maghrib prayer."
+  },
+  "isha": {
+    "message": "Isha",
+    "description": "Label for Isha prayer."
+  },
+  "manualLocation": {
+    "message": "Manual Location",
+    "description": "Label for manual location selection."
+  },
+  "autoLocation": {
+    "message": "Auto Location",
+    "description": "Label for automatic location detection."
+  },
+  "idle": {
+    "message": "Idle",
+    "description": "Status label for idle state."
+  },
+  "loading": {
+    "message": "Loading",
+    "description": "Status label for loading state."
+  },
+  "error": {
+    "message": "Error",
+    "description": "Status label for error state."
+  },
+  "ready": {
+    "message": "Ready",
+    "description": "Status label for ready state."
+  },
+  "optionsTitle": {
+    "message": "Open Muezzin Settings",
+    "description": "Title for settings section."
+  },
+  "calculationMethod": {
+    "message": "Calculation Method",
+    "description": "Label for calculation method setting."
+  },
+  "use24HourFormat": {
+    "message": "Use 24 Hour Format",
+    "description": "Toggle label for 24-hour time format."
+  },
+  "useAutoLocation": {
+    "message": "Use Auto Location",
+    "description": "Toggle label for auto location option."
+  },
+  "manualLocationCity": {
+    "message": "Manual Location (City/Town)",
+    "description": "Label for entering manual city or town."
+  },
+  "enterCityName": {
+    "message": "Enter city name",
+    "description": "Placeholder for city input field."
+  },
+  "Searching": {
+    "message": "Searching...",
+    "description": "Label for searching status."
+  },
+  "noResultsFound": {
+    "message": "No results found for",
+    "description": "Prompt when no location results are found."
+  },
+  "poweredBy": {
+    "message": "Powered by OpenStreetMap",
+    "description": "Attribution text for location data provider."
+  },
+  "locationAccessRequired": {
+    "message": "Location access is required to show accurate prayer times.",
+    "description": "Prompt for location permission."
+  },
+  "allowLocationAccess": {
+    "message": "Allow Location Access",
+    "description": "Button label to allow location access."
+  },
+  "openLocationSettings": {
+    "message": "Open Location Settings",
+    "description": "Link label to open browser location settings."
+  }
+}

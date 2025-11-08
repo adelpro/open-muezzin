@@ -1,3 +1,4 @@
+import { DIR } from "@/constants/direction"
 import { WINDOW_MINUTES } from "@/constants/window-minutes"
 import { cn } from "@/lib/cn"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -51,13 +52,13 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
   // Prepare prayer list including tomorrow's fajr
   const prayers = useMemo(() => {
     const list = prayerOrder.map((prayer) => ({
-      name: prayer,
+      name: chrome.i18n.getMessage(prayer),
       time: times[prayer as keyof PrayerTimesData] as Date
     }))
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     list.push({
-      name: "fajr",
+      name: chrome.i18n.getMessage("Fajr"),
       time: new PrayerTimes(coordinates, tomorrow, method).fajr
     })
     return list
@@ -102,7 +103,7 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm">
+    <div className="mx-auto w-full max-w-sm" dir={DIR}>
       <div className="p-4 w-full text-gray-900 bg-white rounded-2xl border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100">
         <ul className="space-y-2 divide-y divide-gray-100 dark:divide-gray-800">
           {prayerOrder.map((prayer) => {
@@ -135,7 +136,7 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
                 )}>
                 <div className="flex gap-2 items-center capitalize">
                   {icons[prayer] || <Clock size={18} />}
-                  <span>{prayer}</span>
+                  <span>{chrome.i18n.getMessage(prayer)}</span>
                 </div>
 
                 <span className="flex flex-1 justify-center">

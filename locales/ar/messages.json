@@ -1,0 +1,110 @@
+{
+  "extensionName": {
+    "message": "المؤذن المفتوح",
+    "description": "اسم الامتداد."
+  },
+  "extensionDescription": {
+    "message": "المؤذن المفتوح هو امتداد مفتوح المصدر للمتصفح يحسب أوقات الصلاة الإسلامية بدقة اعتمادًا على موقعك. يوفر أوقات الأذان بدقة، دون تتبع، ودون إعلانات، وبدعم كامل لجميع المتصفحات الرئيسية.",
+    "description": "وصف الامتداد."
+  },
+  "Slogan": {
+    "message": "أوقات الصلوات (5)",
+    "description": "تسمية الشعار."
+  },
+  "Fajr": {
+    "message": "الفجر",
+    "description": "تسمية صلاة الفجر."
+  },
+  "Sunrise": {
+    "message": "الشروق",
+    "description": "تسمية وقت الشروق."
+  },
+  "Dhuhr": {
+    "message": "الظهر",
+    "description": "تسمية صلاة الظهر."
+  },
+  "Asr": {
+    "message": "العصر",
+    "description": "تسمية صلاة العصر."
+  },
+  "Maghrib": {
+    "message": "المغرب",
+    "description": "تسمية صلاة المغرب."
+  },
+  "Isha": {
+    "message": "العشاء",
+    "description": "تسمية صلاة العشاء."
+  },
+  "manualLocation": {
+    "message": "الموقع اليدوي",
+    "description": "تسمية اختيار الموقع اليدوي."
+  },
+  "autoLocation": {
+    "message": "الموقع التلقائي",
+    "description": "تسمية الكشف التلقائي عن الموقع."
+  },
+  "idle": {
+    "message": "خامل",
+    "description": "تسمية حالة الخمول."
+  },
+  "loading": {
+    "message": "جارٍ التحميل",
+    "description": "تسمية حالة التحميل."
+  },
+  "error": {
+    "message": "خطأ",
+    "description": "تسمية حالة الخطأ."
+  },
+  "ready": {
+    "message": "جاهز",
+    "description": "تسمية حالة الجاهزية."
+  },
+  "optionsTitle": {
+    "message": "إعدادات المؤذن",
+    "description": "عنوان قسم الإعدادات."
+  },
+  "calculationMethod": {
+    "message": "طريقة الحساب",
+    "description": "تسمية إعداد طريقة الحساب."
+  },
+  "use24HourFormat": {
+    "message": "استخدام تنسيق 24 ساعة",
+    "description": "تسمية لتبديل تنسيق 24 ساعة."
+  },
+  "useAutoLocation": {
+    "message": "استخدام الموقع التلقائي",
+    "description": "تسمية لتبديل خيار الموقع التلقائي."
+  },
+  "manualLocationCity": {
+    "message": "الموقع اليدوي (المدينة / البلدة)",
+    "description": "تسمية لإدخال المدينة أو البلدة يدويًا."
+  },
+  "enterCityName": {
+    "message": "أدخل اسم المدينة",
+    "description": "عنصر نائب لحقل إدخال اسم المدينة."
+  },
+  "Searching": {
+    "message": "جارٍ البحث...",
+    "description": "تسمية حالة البحث."
+  },
+  "noResultsFound": {
+    "message": "لم يتم العثور على نتائج للبحث عن",
+    "description": "مشجع للمستخدم على عدم العثور على نتائج البحث."
+  },
+  "poweredBy": {
+    "message": "مدعوم من OpenStreetMap",
+    "description": "نص اعتماد لموفر بيانات الموقع."
+  },
+  "locationAccessRequired": {
+    "message": "يتطلب الوصول إلى الموقع للحصول على أوقات الصلاة الدقيقة.",
+    "description": "مشجع للمستخدم على السماح بالوصول إلى الموقع."
+  },
+  "allowLocationAccess": {
+    "message": " السماح بالوصول إلى الموقع",
+    "description": " ярлык زر للسماح بالوصول إلى الموقع."
+  },
+  "openLocationSettings": {
+    "message": "فتح إعدادات الموقع",
+    "description": "زر لفتح إعدادات الموقع."
+  }
+}

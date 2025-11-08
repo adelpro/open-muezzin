@@ -13,14 +13,13 @@ export type SettingsState = {
   autoLocation: boolean
   twentyFourHourFormat?: boolean
   cachedCoordinates?: Coordinates
-  playAdhan: boolean
 
   setCalculationMethod: (method: keyof typeof CalculationMethod) => void
   setManualLocation: (location: Location) => void
   setAutoLocation: (value: boolean) => void
   setTwentyFourHourFormat: (value: boolean) => void
   setCachedCoordinates: (coords: Coordinates) => void
-  setPlayAdhan: (value: boolean) => void
+
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -31,14 +30,14 @@ export const useSettingsStore = create<SettingsState>()(
       autoLocation: true,
       twentyFourHourFormat: false,
       cachedCoordinates: undefined,
-      playAdhan: true,
+
 
       setCalculationMethod: (method) => set({ calculationMethod: method }),
       setManualLocation: (location) => set({ manualLocation: location }),
       setAutoLocation: (value) => set({ autoLocation: value }),
       setTwentyFourHourFormat: (value) => set({ twentyFourHourFormat: value }),
       setCachedCoordinates: (coords) => set({ cachedCoordinates: coords }),
-      setPlayAdhan: (value) => set({ playAdhan: value }),
+
     }),
     {
       name: "open-muezzin-settings",
