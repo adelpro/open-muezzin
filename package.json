@@ -50,6 +50,11 @@
     ],
     "host_permissions": [
       "https://*/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "dcopakhlmmjegccfagmnkocnbcgjagkl"
+      }
+    }
   }
 }
