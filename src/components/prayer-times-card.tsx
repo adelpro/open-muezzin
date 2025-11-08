@@ -1,4 +1,4 @@
-import { CURRENT_WINDOW_MINUTES } from "@/constants/current-window-minutes"
+import { WINDOW_MINUTES } from "@/constants/window-minutes"
 import { cn } from "@/lib/cn"
 import { useSettingsStore } from "@/stores/settings-store"
 import type { PrayerTimesData } from "@/types/prayer-times-data.js"
@@ -9,13 +9,9 @@ import React, { useEffect, useMemo, useState } from "react"
 
 type PrayerTimesCardProps = {
   coordinates: Coordinates
-  currentWindowMinutes?: number
 }
 
-export function PrayerTimesCard({
-  coordinates,
-  currentWindowMinutes = CURRENT_WINDOW_MINUTES
-}: PrayerTimesCardProps) {
+export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
   const { calculationMethod, twentyFourHourFormat } = useSettingsStore()
   const method = CalculationMethod[calculationMethod]()
 
@@ -71,10 +67,10 @@ export function PrayerTimesCard({
   const currentPrayer =
     prayers.find((prayer) => {
       const windowStart = new Date(
-        prayer.time.getTime() - currentWindowMinutes * 60 * 1000
+        prayer.time.getTime() - WINDOW_MINUTES * 60 * 1000
       )
       const windowEnd = new Date(
-        prayer.time.getTime() + currentWindowMinutes * 60 * 1000
+        prayer.time.getTime() + WINDOW_MINUTES * 60 * 1000
       )
       return now >= windowStart && now <= windowEnd
     }) || null
@@ -83,15 +79,22 @@ export function PrayerTimesCard({
     ? prayers[prayers.indexOf(currentPrayer) + 1] || prayers[0]
     : prayers.find((prayer) => prayer.time > now) || prayers[0]
 
-  // Countdown function relative to prayer time
-  const getCountdown = (prayerTime: Date) => {
-    const diffMs = now.getTime() - prayerTime.getTime()
-    const prefix = diffMs < 0 ? "−" : "+"
-    const absMs = Math.abs(diffMs)
+  // Countdown function for both current and next prayer
+  const getCountdown = (prayerTime: Date, forNextPrayer = false) => {
+    let diffMs = prayerTime.getTime() - now.getTime() // time until prayer
+    let prefix = ""
+    if (!forNextPrayer) {
+      // For current prayer, show + / − based on window
+      prefix = diffMs < 0 ? "+" : "−"
+      diffMs = Math.abs(diffMs)
+    } else {
+      // For next prayer, always show remaining time with −
+      prefix = "−"
+    }
 
-    const hours = Math.floor(absMs / 3600000)
-    const minutes = Math.floor((absMs % 3600000) / 60000)
-    const seconds = Math.floor((absMs % 60000) / 1000)
+    const hours = Math.floor(diffMs / 3600000)
+    const minutes = Math.floor((diffMs % 3600000) / 60000)
+    const seconds = Math.floor((diffMs % 60000) / 1000)
 
     return `${prefix}${hours ? hours + "h " : ""}${minutes}m ${seconds
       .toString()
@@ -117,7 +120,7 @@ export function PrayerTimesCard({
             } else if (isNext) {
               timerDisplay = (
                 <span className="px-3 py-1 font-mono text-xs rounded-full bg-accent/20 text-accent">
-                  −{getCountdown(nextPrayer!.time)}
+                  {getCountdown(nextPrayer!.time, true)}
                 </span>
               )
             }
@@ -128,7 +131,7 @@ export function PrayerTimesCard({
                 className={cn(
                   "flex items-center justify-between py-3 px-3 rounded-xl transition-colors",
                   isCurrent &&
-                    "font-semibold ring-1 shadow-sm bg-primary/10 text-primary ring-primary/20"
+                    "font-semibold shadow-sm bg-primary/10 text-primary ring-1 ring-primary"
                 )}>
                 <div className="flex gap-2 items-center capitalize">
                   {icons[prayer] || <Clock size={18} />}

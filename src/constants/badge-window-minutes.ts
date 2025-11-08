@@ -1,0 +1,1 @@
+export const BADGE_WINDOW_MINUTES = 15

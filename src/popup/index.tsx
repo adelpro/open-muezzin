@@ -1,7 +1,6 @@
-import React from "react"
-
 import "@/styles.css"
 
+import AdhenPlayer from "@/components/adhen-player"
 import { PrayerTimesCard } from "@/components/prayer-times-card"
 import { PrayerTimesSkeleton } from "@/components/prayer-times-skeleton"
 import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
@@ -29,12 +28,24 @@ export default function IndexPopup() {
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
+      <AdhenPlayer />
       {(status === "loading" || loadingCoordinates) && <PrayerTimesSkeleton />}
       {status === "ready" && !loadingCoordinates && (
-        <PrayerTimesCard coordinates={coordinates} />
+        <>
+          <PrayerTimesCard coordinates={coordinates} />
+          {/* Footer */}
+          <footer className="flex flex-col mt-3 space-y-2 text-xs text-center text-gray-500">
+            <span>
+              {autoLocation ? "Auto location" : "Manual location"} • {status} •{" "}
+              {address ||
+                `${coordinates?.latitude?.toFixed?.(3)}, ${coordinates?.longitude?.toFixed?.(3)}`}
+            </span>
+            <span>{today}</span>
+          </footer>
+        </>
       )}
 
-      {status === "idle" && (
+      {status === "idle" && !loadingCoordinates && (
         <div className="text-center">
           <p className="text-gray-300">
             Location access is required to show accurate prayer times.
@@ -59,15 +70,6 @@ export default function IndexPopup() {
           </button>
         </div>
       )}
-      {/* Footer */}
-      <footer className="flex flex-col mt-3 space-y-2 text-xs text-center text-gray-500">
-        <span>
-          {autoLocation ? "Auto location" : "Manual location"} • {status} •{" "}
-          {address ||
-            `${coordinates?.latitude?.toFixed?.(3)}, ${coordinates?.longitude?.toFixed?.(3)}`}
-        </span>
-        <span>{today}</span>
-      </footer>
     </div>
   )
 }

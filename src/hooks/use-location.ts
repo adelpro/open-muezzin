@@ -100,6 +100,11 @@ export function useLocation(fallback: Coordinates) {
     setError(null)
   }, [manualLocation, fallback, reverseGeocode])
 
+  // Used to sync coodinates with the background script
+  useEffect(() => {
+    chrome.storage.local.set({ cachedCoordinates: coordinates })
+  }, [coordinates])
+
   useEffect(() => {
     if (autoLocation) {
       if (navigator.permissions) {

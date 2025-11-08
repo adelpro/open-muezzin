@@ -1,18 +1,13 @@
-import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
-import { CURRENT_WINDOW_MINUTES } from "@/constants/current-window-minutes"
+import { BADGE_WINDOW_MINUTES } from "@/constants/badge-window-minutes"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
 
-// === CONFIG ===
-const BADGE_COLOR = "#34d3c3" // green
-const CHECK_INTERVAL_MINUTES = 1 // run every minute
-
+const BADGE_COLOR = "#34d3c3"
+const CHECK_INTERVAL_MINUTES = 1
 const PRAYER_ORDER = ["fajr", "dhuhr", "asr", "maghrib", "isha"] as const
 
-// Helper: show badge
 function showBadge(text: string) {
   const action = chrome.action || chrome.browserAction
   if (!action) return
-
   try {
     action.setBadgeBackgroundColor({ color: BADGE_COLOR })
     action.setBadgeText({ text })
@@ -21,11 +16,9 @@ function showBadge(text: string) {
   }
 }
 
-// Helper: hide badge
 function hideBadge() {
   const action = chrome.action || chrome.browserAction
   if (!action) return
-
   try {
     action.setBadgeText({ text: "" })
   } catch (err) {
@@ -33,10 +26,26 @@ function hideBadge() {
   }
 }
 
-// Main function
+// Coordinates
+async function getCoordinates(): Promise<Coordinates | null> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get("cachedCoordinates", (result) => {
+      if (result.cachedCoordinates) resolve(result.cachedCoordinates)
+      else resolve(null)
+    })
+  })
+}
+
+// Prayer Check
 async function updatePrayerBadge() {
   const now = new Date()
-  const coordinates: Coordinates = COORDINATES_FALLBACK
+  const coordinates = await getCoordinates()
+
+  if (!coordinates) {
+    hideBadge()
+    return
+  }
+
   const method = CalculationMethod.MuslimWorldLeague()
   const prayerTimes = new PrayerTimes(coordinates, now, method)
 
@@ -45,47 +54,34 @@ async function updatePrayerBadge() {
     time: prayerTimes[name as keyof typeof prayerTimes] as Date
   }))
 
-  // Find the closest prayer within ±CURRENT_WINDOW_MINUTES
-  const currentPrayer = prayers.find((prayer) => {
-    const windowEnd = new Date(
-      prayer.time.getTime() + CURRENT_WINDOW_MINUTES * 60 * 1000
-    )
-    return now >= prayer.time && now <= windowEnd
+  const closestPrayer = prayers.find((prayer) => {
+    const diffMinutes = (prayer.time.getTime() - now.getTime()) / 60000
+    return Math.abs(diffMinutes) <= BADGE_WINDOW_MINUTES
   })
 
-  if (currentPrayer) {
-    const diff = now.getTime() - currentPrayer.time.getTime()
-    const prefix = diff < 0 ? "−" : "+"
-    const minutes = Math.floor(Math.abs(diff) / 60000)
-    showBadge(`${prefix}${minutes}`)
-    chrome.alarms.create("hidePrayerBadge", { delayInMinutes: 1 })
-  } else {
-    hideBadge()
-  }
-
-  if (currentPrayer) {
+  if (closestPrayer) {
     const diffMinutes = Math.round(
-      (now.getTime() - currentPrayer.time.getTime()) / (60 * 1000)
+      (closestPrayer.time.getTime() - now.getTime()) / 60000
     )
-    showBadge(`${diffMinutes >= 0 ? "+" : ""}${diffMinutes}`) // e.g., -15 to +15
-    chrome.alarms.create("hidePrayerBadge", {
-      delayInMinutes: 1 // update every minute
-    })
+    showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
   } else {
     hideBadge()
   }
 }
 
-// === Alarms ===
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "checkPrayerBadge") updatePrayerBadge()
-  else if (alarm.name === "hidePrayerBadge") hideBadge()
+//Storage Change Listener
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.cachedCoordinates) {
+    updatePrayerBadge()
+  }
 })
 
-// Run immediately
-updatePrayerBadge()
-
-// Periodic check
+// Interval Update
 chrome.alarms.create("checkPrayerBadge", {
   periodInMinutes: CHECK_INTERVAL_MINUTES
+})
+
+// Alarm Check
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "checkPrayerBadge") updatePrayerBadge()
 })
