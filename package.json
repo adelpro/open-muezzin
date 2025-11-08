@@ -8,6 +8,7 @@
     "dev": "plasmo dev",
     "dev:firefox": "plasmo dev --target=firefox",
     "build": "plasmo build",
+    "build:firefox": "plasmo build --target=firefox-mv3",
     "package": "plasmo package",
     "lint": "eslint . --ext .ts,.tsx",
     "clean": "rimraf .plasmo build"
@@ -53,7 +54,13 @@
     ],
     "browser_specific_settings": {
       "gecko": {
-        "id": "dcopakhlmmjegccfagmnkocnbcgjagkl"
+        "id": "open-muezzin@adelpro.us",
+        "strict_min_version": "140.0",
+        "data_collection_permissions": {
+          "required": [
+            "none"
+          ]
+        }
       }
     }
   }
