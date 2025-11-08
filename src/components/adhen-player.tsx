@@ -1,22 +1,53 @@
 import { cn } from "@/lib"
+import { useSettingsStore } from "@/stores/settings-store"
 import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import adhanSound from "url:~/assets/first_adhan_masjid_aadam.ogg"
+import adhanSound from "url:~/assets/adhan-alger.ogg"
 
 import PulsatingDots from "./pulsating-dots"
 
 export default function AdhanPlayer() {
   const audio = useRef<HTMLAudioElement>(null)
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentPrayer, setCurrentPrayer] = useState<string>("")
+  const [unlocked, setUnlocked] = useState(false)
+  const { playAdhan } = useSettingsStore()
 
-  useEffect(() => {
+  // Unlock audio context on first user gesture
+  const unlockAudio = () => {
+    if (unlocked) return
     const element = audio.current
     if (!element) return
+    element.volume = 0
+    element.play().finally(() => {
+      element.pause()
+      element.currentTime = 0
+      element.volume = 0.8
+      setUnlocked(true)
+    })
+  }
 
-    element.volume = 0.8
-    element.onended = () => setIsPlaying(false)
-    element.play().catch(() => setIsPlaying(false))
-  }, [])
+  useEffect(() => {
+    const handlePrayerTime = (msg: any) => {
+      if (msg.type === "PRAYER_TIME") {
+        const element = audio.current
+        if (!element) return
+        if (!unlocked) {
+          console.warn("Audio context not unlocked yet")
+          return
+        }
+        element.currentTime = 0
+        element.volume = 0.8
+        element.play().catch(console.error)
+        setIsPlaying(true)
+        setCurrentPrayer(msg.prayer)
+      }
+    }
+
+    chrome.runtime.onMessage.addListener(handlePrayerTime)
+
+    return () => chrome.runtime.onMessage.removeListener(handlePrayerTime)
+  }, [unlocked])
 
   const handleStop = () => {
     const element = audio.current
@@ -26,6 +57,10 @@ export default function AdhanPlayer() {
     setIsPlaying(false)
   }
 
+  // Don't render anything until user enables Adhan
+  if (!playAdhan) return null
+
+  // Only render the player UI when playing
   if (!isPlaying) return null
 
   return (
@@ -39,15 +74,24 @@ export default function AdhanPlayer() {
         <div className="flex gap-2 items-center">
           <PulsatingDots />
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-100">
-            Adhan is playing
+            Adhan of {currentPrayer} is playing
           </span>
         </div>
-        <button
-          onClick={handleStop}
-          aria-label="Stop Adhan"
-          className="p-1.5 rounded-full text-neutral-500 hover:text-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
-          <X size={16} />
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleStop}
+            aria-label="Stop Adhan"
+            className="p-1.5 rounded-full text-neutral-500 hover:text-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
+            <X size={16} />
+          </button>
+          {!unlocked && (
+            <button
+              onClick={unlockAudio}
+              className="px-2 py-1 text-xs text-white rounded bg-primary-600 hover:bg-primary-700">
+              Unlock Audio
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -21,7 +21,9 @@ export default function Options() {
     setManualLocation,
     setAutoLocation,
     twentyFourHourFormat,
-    setTwentyFourHourFormat
+    setTwentyFourHourFormat,
+    playAdhan,
+    setPlayAdhan
   } = useSettingsStore()
 
   // allow aborting in-flight reverse geocode requests
@@ -104,9 +106,9 @@ export default function Options() {
   }, [success, error])
 
   return (
-    <div className="flex items-center justify-center w-full h-svh">
-      <div className="relative w-full max-w-md p-6 mx-auto bg-white shadow-lg rounded-2xl">
-        <h1 className="w-full mb-6 text-xl font-bold text-center text-gray-800">
+    <div className="flex justify-center items-center w-full h-svh">
+      <div className="relative p-6 mx-auto w-full max-w-md bg-white rounded-2xl shadow-lg">
+        <h1 className="mb-6 w-full text-xl font-bold text-center text-gray-800">
           Muezzin Settings
         </h1>
 
@@ -121,7 +123,7 @@ export default function Options() {
               event.target.value as keyof typeof CalculationMethod
             )
           }
-          className="w-full p-2 mb-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          className="p-2 mb-4 w-full rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
           {Object.entries(CalculationMethod).map(([key]) => (
             <option key={key} value={key}>
               {key}
@@ -130,25 +132,36 @@ export default function Options() {
         </select>
 
         {/* 24 Hour Toggle */}
-        <label className="flex items-center gap-3 mb-4">
+        <label className="flex gap-3 items-center mb-4">
           <input
             type="checkbox"
             checked={twentyFourHourFormat}
             onChange={() => setTwentyFourHourFormat(!twentyFourHourFormat)}
-            className="w-5 h-5 text-blue-500 border-gray-300 rounded focus:ring-blue-400"
+            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
           />
           <span className="font-medium text-gray-700">Use 24 Hour Format</span>
         </label>
 
         {/* Auto Location Toggle */}
-        <label className="flex items-center gap-3 mb-4">
+        <label className="flex gap-3 items-center mb-4">
           <input
             type="checkbox"
             checked={autoLocation}
             onChange={() => setAutoLocation(!autoLocation)}
-            className="w-5 h-5 text-blue-500 border-gray-300 rounded focus:ring-blue-400"
+            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
           />
           <span className="font-medium text-gray-700">Use Auto Location</span>
+        </label>
+
+        {/* Play Adhan Toggle */}
+        <label className="flex gap-3 items-center mb-4">
+          <input
+            type="checkbox"
+            checked={playAdhan}
+            onChange={() => setPlayAdhan(!playAdhan)}
+            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
+          />
+          <span className="font-medium text-gray-700">Play Adhan</span>
         </label>
 
         {/* Manual Location Input - only show when auto-location is off */}
@@ -167,19 +180,19 @@ export default function Options() {
                   setError(null)
                 }}
                 placeholder="Enter city name"
-                className="relative z-10 w-full p-2 pr-8 mb-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="relative z-10 p-2 pr-8 mb-4 w-full rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
 
               {isLoading && (
-                <span className="absolute w-3 h-3 -translate-y-1/2 border-2 border-blue-500 rounded-full right-2 top-1/2 animate-spin border-t-transparent"></span>
+                <span className="absolute right-2 top-1/2 w-3 h-3 rounded-full border-2 border-blue-500 animate-spin -translate-y-1/2 border-t-transparent"></span>
               )}
             </div>
 
             {!autoLocation && (searchResults || isLoading) && (
-              <div className="absolute left-0 right-0 z-20 bg-white border border-gray-200 rounded-lg shadow-xl top-16">
+              <div className="absolute right-0 left-0 top-16 z-20 bg-white rounded-lg border border-gray-200 shadow-xl">
                 {isLoading ? (
-                  <p className="flex items-center gap-2 p-3 text-sm text-gray-500">
-                    <span className="w-3 h-3 border-2 border-blue-500 rounded-full animate-spin border-t-transparent" />
+                  <p className="flex gap-2 items-center p-3 text-sm text-gray-500">
+                    <span className="w-3 h-3 rounded-full border-2 border-blue-500 animate-spin border-t-transparent" />
                     Searching...
                   </p>
                 ) : searchResults && searchResults.length > 0 ? (
@@ -209,7 +222,7 @@ export default function Options() {
           </div>
         )}
 
-        <p className="w-full mt-5 text-sm text-center text-gray-500">
+        <p className="mt-5 w-full text-sm text-center text-gray-500">
           Powered by OpenStreetMap
         </p>
       </div>

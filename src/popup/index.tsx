@@ -1,10 +1,13 @@
 import "@/styles.css"
 
-import AdhenPlayer from "@/components/adhen-player"
+// import AdhenPlayer from "@/components/adhen-player"
+import { Footer } from "@/components/footer"
+import { FooterSkeleton } from "@/components/footer-skeleton"
+import { Header } from "@/components/header"
 import { PrayerTimesCard } from "@/components/prayer-times-card"
 import { PrayerTimesSkeleton } from "@/components/prayer-times-skeleton"
 import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
-import { useLocation } from "@/hooks/use-location" // adjust path if needed
+import { useLocation } from "@/hooks/use-location"
 import { useSettingsStore } from "@/stores/settings-store"
 
 export default function IndexPopup() {
@@ -20,29 +23,24 @@ export default function IndexPopup() {
     requestLocation
   } = useLocation(COORDINATES_FALLBACK)
 
-  const today = new Date().toLocaleDateString(undefined, {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
-  })
-
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
-      <AdhenPlayer />
+      <Header />
+      {/* TODO add Adhan Player */}
+      {/* <AdhenPlayer /> */}
       {(status === "loading" || loadingCoordinates) && <PrayerTimesSkeleton />}
-      {status === "ready" && !loadingCoordinates && (
+      {status === "ready" && !loadingCoordinates ? (
         <>
           <PrayerTimesCard coordinates={coordinates} />
-          {/* Footer */}
-          <footer className="flex flex-col mt-3 space-y-2 text-xs text-center text-gray-500">
-            <span>
-              {autoLocation ? "Auto location" : "Manual location"} • {status} •{" "}
-              {address ||
-                `${coordinates?.latitude?.toFixed?.(3)}, ${coordinates?.longitude?.toFixed?.(3)}`}
-            </span>
-            <span>{today}</span>
-          </footer>
+          <Footer
+            autoLocation={autoLocation}
+            status={status}
+            address={address}
+            coordinates={coordinates}
+          />
         </>
+      ) : (
+        <FooterSkeleton />
       )}
 
       {status === "idle" && !loadingCoordinates && (
@@ -52,7 +50,7 @@ export default function IndexPopup() {
           </p>
           <button
             onClick={requestLocation}
-            className="px-4 py-2 mt-4 text-white rounded transition bg-prim ry hover:bg-blue-700">
+            className="px-4 py-2 mt-4 text-white rounded transition bg-primary-600 hover:bg-primary-500">
             Allow Location Access
           </button>
         </div>

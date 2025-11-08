@@ -64,6 +64,20 @@ async function updatePrayerBadge() {
       (closestPrayer.time.getTime() - now.getTime()) / 60000
     )
     showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
+
+    // Fire notification exactly at prayer time
+    if (diffMinutes === 0) {
+      console.log("Prayer time is 12 minutes away")
+      chrome.notifications.create({
+        type: "basic",
+        iconUrl: chrome.runtime.getURL("assets/icon512.png"),
+        title: "Prayer Time",
+        message: `It's time for ${closestPrayer.name} prayer`,
+        priority: 2
+      })
+    }
+
+
   } else {
     hideBadge()
   }
@@ -85,3 +99,4 @@ chrome.alarms.create("checkPrayerBadge", {
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "checkPrayerBadge") updatePrayerBadge()
 })
+
