@@ -22,7 +22,6 @@ export default function IndexPopup() {
     error,
     requestLocation
   } = useLocation(COORDINATES_FALLBACK)
-  console.log("Popup status:", status, coordinates, error)
 
   return (
     <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">

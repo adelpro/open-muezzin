@@ -8,7 +8,7 @@ type Status = "idle" | "loading" | "error" | "ready"
 export function useLocation(fallback: Coordinates) {
   const { autoLocation, manualLocation, setCachedCoordinates } = useSettingsStore()
   const [coordinates, setCoordinates] = useState<Coordinates>(fallback)
-  const [address, setAddress] = useState<string>("")
+  const [address, setAddress] = useState("")
   const [status, setStatus] = useState<Status>("idle")
   const [loadingCoordinates, setLoadingCoordinates] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -83,7 +83,6 @@ export function useLocation(fallback: Coordinates) {
 
   const setFromStore = useCallback(() => {
     if (!manualLocation) {
-      // fallback
       setCoordinates(fallback)
       setAddress("")
       setStatus("ready")
@@ -101,7 +100,6 @@ export function useLocation(fallback: Coordinates) {
     setError(null)
   }, [manualLocation, fallback, reverseGeocode])
 
-  // Used to sync coodinates with the background script
   useEffect(() => {
     if (coordinates) setCachedCoordinates(coordinates)
   }, [coordinates, setCachedCoordinates])
@@ -112,25 +110,14 @@ export function useLocation(fallback: Coordinates) {
         void navigator.permissions
           .query({ name: "geolocation" as PermissionName })
           .then((perm) => {
-            if (perm.state === "granted") setFromBrowser()
-            else if (perm.state === "prompt") {
-              // show fallback for UX while waiting
-              setCoordinates(fallback)
-              setAddress("")
-              setStatus("idle")
-              setLoadingCoordinates(true)
-
-              if (reverseControllerRef.current)
-                reverseControllerRef.current.abort()
-              reverseControllerRef.current = new AbortController()
-              void reverseGeocode(fallback, reverseControllerRef.current.signal)
+            if (perm.state === "granted" || perm.state === "prompt") {
+              // FIXED: trigger prompt immediately
+              setFromBrowser()
             } else {
               setCoordinates(fallback)
               setAddress("")
               setStatus("error")
-              setError(
-                "Location access blocked. Enable it in browser settings."
-              )
+              setError("Location access blocked. Enable it in browser settings.")
               setLoadingCoordinates(false)
 
               if (reverseControllerRef.current)
@@ -150,18 +137,9 @@ export function useLocation(fallback: Coordinates) {
     return () => {
       if (reverseControllerRef.current) reverseControllerRef.current.abort()
     }
-  }, [
-    autoLocation,
-    manualLocation,
-    fallback,
-    setFromBrowser,
-    setFromStore,
-    reverseGeocode
-  ])
+  }, [autoLocation, manualLocation, fallback, setFromBrowser, setFromStore, reverseGeocode])
 
-  const requestLocation = useCallback(() => {
-    return setFromBrowser()
-  }, [setFromBrowser])
+  const requestLocation = useCallback(() => setFromBrowser(), [setFromBrowser])
 
   return {
     coordinates,
