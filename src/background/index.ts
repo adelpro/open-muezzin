@@ -27,11 +27,11 @@ function hideBadge() {
 }
 
 // Coordinates
-async function getCoordinates(): Promise<Coordinates | null> {
+const getCoordinates = async (): Promise<Coordinates | null> => {
   return new Promise((resolve) => {
-    chrome.storage.local.get("cachedCoordinates", (result) => {
-      if (result.cachedCoordinates) resolve(result.cachedCoordinates)
-      else resolve(null)
+    chrome.storage.local.get("open-muezzin-settings", (result) => {
+      const coords = result["open-muezzin-settings"]?.cachedCoordinates
+      resolve(coords ?? null)
     })
   })
 }

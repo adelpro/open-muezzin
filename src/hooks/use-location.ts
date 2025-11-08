@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 type Status = "idle" | "loading" | "error" | "ready"
 
 export function useLocation(fallback: Coordinates) {
-  const { autoLocation, manualLocation } = useSettingsStore()
+  const { autoLocation, manualLocation, setCachedCoordinates } = useSettingsStore()
   const [coordinates, setCoordinates] = useState<Coordinates>(fallback)
   const [address, setAddress] = useState<string>("")
   const [status, setStatus] = useState<Status>("idle")
@@ -30,9 +30,9 @@ export function useLocation(fallback: Coordinates) {
         const data = await res.json()
         setAddress(
           data.address?.city ||
-            data.address?.town ||
-            data.display_name ||
-            "Unknown location"
+          data.address?.town ||
+          data.display_name ||
+          "Unknown location"
         )
       } catch {
         if (signal?.aborted) return
@@ -102,8 +102,8 @@ export function useLocation(fallback: Coordinates) {
 
   // Used to sync coodinates with the background script
   useEffect(() => {
-    chrome.storage.local.set({ cachedCoordinates: coordinates })
-  }, [coordinates])
+    if (coordinates) setCachedCoordinates(coordinates)
+  }, [coordinates, setCachedCoordinates])
 
   useEffect(() => {
     if (autoLocation) {
