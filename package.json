@@ -2,7 +2,7 @@
   "name": "open-muezzin",
   "displayName": "Open Muezzin",
   "version": "0.0.2",
-  "description": "Open-Muezzin is an open-source platform and extension that provides accurate prayer times and location-based Athan notifications, with no tracking, no ads, and universal support for most browsers.",
+  "description": "Open-source prayer times & Athan extension. No tracking, no ads, universal browser support.",
   "author": "Adelpro <contact@adelpro.us.kg>",
   "scripts": {
     "dev": "plasmo dev",
@@ -50,7 +50,7 @@
       "alarms"
     ],
     "host_permissions": [
-      "https://*/*"
+      "https://nominatim.openstreetmap.org/*"
     ],
     "browser_specific_settings": {
       "gecko": {
