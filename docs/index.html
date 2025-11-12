@@ -8,7 +8,6 @@
   <meta name="language" content="English" />
   <meta name="author" content="Adel Benyahia" />
 
-  <!-- SEO & Open Graph -->
   <title>Open Muezzin – Prayer Times & Athan Browser Extension</title>
   <meta name="description"
     content="Open-source prayer times & Athan browser extension. No tracking, no ads, precise times for your location across Chrome and Firefox." />
@@ -20,21 +19,6 @@
   <link rel="alternate" hreflang="ar" href="https://openmuezzin.adelpro.us.kg/ar/" />
   <link rel="alternate" hreflang="x-default" href="https://openmuezzin.adelpro.us.kg/" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Open Muezzin – Prayer Times & Athan" />
-  <meta property="og:description"
-    content="Open-source prayer times & Athan browser extension. No tracking, no ads, precise times for your location across Chrome and Firefox." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://openmuezzin.adelpro.us.kg" />
-  <meta property="og:image" content="https://openmuezzin.adelpro.us.kg/icons/icon512.png" />
-  <meta property="og:site_name" content="Open Muezzin" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Open Muezzin – Prayer Times & Athan" />
-  <meta name="twitter:description"
-    content="Open-source prayer times & Athan extension. Privacy-first, ad-free, available on Chrome and Firefox." />
-  <meta name="twitter:image" content="https://openmuezzin.adelpro.us.kg/icons/icon512.png" />
-
   <!-- Favicons -->
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="16x16" href="icons/icon16.png" />
@@ -43,132 +27,162 @@
   <link rel="manifest" href="site.webmanifest" />
   <meta name="theme-color" content="#14b8a6" />
 
-  <!-- Preload -->
-  <link rel="preload" as="image" href="icons/icon512.png" />
-
-  <!-- External stylesheet -->
+  <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <div class="container">
-    <header>
-      <div class="logo" itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
-        <img src="icons/icon512.png" alt="Open Muezzin logo" itemprop="logo" loading="eager" width="64" height="64" />
-        <span itemprop="name">Open Muezzin</span>
-      </div>
-
-      <!-- Language Switch -->
-      <nav class="lang-switch" aria-label="Language switch">
-        <a href="/" hreflang="en" rel="alternate" class="active">English</a> |
-        <a href="/ar/" hreflang="ar" rel="alternate">العربية</a>
-      </nav>
-
+    <!-- Header -->
+    <header class="site-header" role="banner">
+      <a href="/" class="brand" aria-label="Open Muezzin home" itemprop="publisher" itemscope
+        itemtype="https://schema.org/Organization">
+        <img src="icons/icon512.png" alt="Open Muezzin logo" itemprop="logo" width="48" height="48" />
+        <span class="site-name" itemprop="name">Open Muezzin</span>
+      </a>
       <p class="tagline" itemprop="slogan">Privacy-first · No ads · Open-source</p>
     </header>
 
+    <!-- Hero -->
     <main class="hero" role="main" itemscope itemtype="https://schema.org/SoftwareApplication">
       <h1 class="hero-title" itemprop="name">Precise prayer times tailored to your location</h1>
       <p class="hero-subtitle" itemprop="description">
         Open-source browser extension for Athan and daily prayer tracking. Works across major browsers without tracking
-        or data collection.
+        or
+        data collection.
       </p>
 
+      <!-- CTA Buttons -->
       <div class="cta-group" role="group" aria-label="Install buttons">
         <a class="btn btn-primary" href="https://addons.mozilla.org/fr/firefox/addon/open-muezzin/" target="_blank"
           rel="noopener" aria-label="Install Open Muezzin on Firefox" itemprop="offers" itemscope
           itemtype="https://schema.org/Offer">
-          <img src="icons/firefox.svg" alt="Firefox icon" />
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor">
+            <path d="...Firefox SVG path..." />
+          </svg>
           <span itemprop="name">Install on Firefox</span>
         </a>
         <a class="btn btn-secondary"
-          href="https://chromewebstore.google.com/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
+          href="https://chrome.google.com/webstore/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
           target="_blank" rel="noopener" aria-label="Install Open Muezzin on Chrome" itemprop="offers" itemscope
           itemtype="https://schema.org/Offer">
-          <img src="icons/chrome.svg" alt="Chrome icon" />
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor">
+            <path d="...Chrome SVG path..." />
+          </svg>
           <span itemprop="name">Install on Chrome</span>
         </a>
       </div>
 
+      <!-- Features -->
       <div class="features">
         <div class="feature-card">
-          <h3><img src="icons/privacy.svg" width="16" height="16" alt="" /> Privacy-focused</h3>
+          <h3>
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M805.44 333.14c19.78 17.8 22.45 47.53 6.93 68.49l-3.12 3.82-221.14 245.71c-54.09 60.1-145.1 67.71-208.29 18.64l-5.84-4.77-148.11-126.96c-21.47-18.4-23.96-50.72-5.56-72.19 17.32-20.21 46.97-23.6 68.3-8.58l3.9 3.03 148.11 126.95c19.86 17.02 49.09 16.21 67.96-1.17l3.42-3.45 221.14-245.71c18.91-21.02 51.28-22.72 72.3-3.81z m-293.45-206.2C411.87 203.88 291.38 255.64 160 272.76L159.99 576c0 194.4 157.6 352 352 352s352-157.6 352-352l0.01-303.24c-126.13-16.43-242.22-64.8-339.91-136.72l-12.1-9.1zM512.01 0l9.71 9.33c111.15 104.5 259.67 169.72 423.38 173.46l14.92 0.17-0.03 393.04c0 247.42-200.58 448-448 448s-448-200.58-448-448V182.97c174.43 0 332.57-69.79 448.02-182.97z" />
+            </svg>
+            Privacy-focused
+          </h3>
           <p>Stores no personal data, no tracking, no ads.</p>
         </div>
         <div class="feature-card">
-          <h3><img src="icons/check.svg" width="16" height="16" alt="" /> Accurate & configurable</h3>
+          <h3>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.41 0l8.59-8.59a1 1 0 0 0-1.41-1.41L9 16.17z" />
+            </svg>
+            Accurate & configurable
+          </h3>
           <p>Precise timings with method and location settings.</p>
         </div>
         <div class="feature-card">
-          <h3><img src="icons/phone.svg" width="16" height="16" alt="" /> Universal support</h3>
+          <h3>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.34.03-.67.08-1h15.84c.05.33.08.66.08 1 0 4.41-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+            </svg>
+            Universal support
+          </h3>
           <p>Designed for modern Chrome and Firefox browsers.</p>
         </div>
       </div>
     </main>
 
+
+    <!-- Footer -->
     <footer>
+      <nav class="lang-switch" aria-label="Language switch">
+        <a href="/" hreflang="en" rel="alternate" class="active">English</a> |
+        <a href="/ar/" hreflang="ar" rel="alternate">العربية</a>
+      </nav>
+
       <nav class="footer-links" aria-label="Footer links">
         <a href="https://github.com/benyahia-dev/open-muezzin" target="_blank" rel="noopener"
           aria-label="Source code on GitHub">
-          <img src="icons/github.svg" alt="GitHub icon" /> Source
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 0.297C5.37 0.297 0 5.667 0 12.297c0 5.303 3.438 9.8 8.205 11.387.6.11.82-.26.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.09-.746.083-.73.083-.73 1.205.084 1.84 1.236 1.84 1.236 1.07 1.833 2.807 1.303 3.492.997.107-.775.418-1.303.762-1.602-2.665-.305-5.467-1.332-5.467-5.931 0-1.31.465-2.382 1.235-3.222-.123-.303-.535-1.523.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3-.404c1.02.005 2.045.137 3 .404 2.28-1.552 3.285-1.23 3.285-1.23.655 1.653.243 2.873.12 3.176.77.84 1.233 1.912 1.233 3.222 0 4.61-2.807 5.623-5.48 5.921.43.37.823 1.096.823 2.21v3.28c0 .32.217.694.825.576C20.565 22.092 24 17.595 24 12.297 24 5.667 18.627.297 12 .297z" />
+          </svg>
+          Source
         </a>
         <a href="https://addons.mozilla.org/fr/firefox/addon/open-muezzin/" target="_blank" rel="noopener"
           aria-label="Firefox Add-ons listing">
-          <img src="icons/firefox.svg" alt="Firefox icon" /> Firefox
+          <img src="icons/firefox.svg" alt="Firefox icon" />
+          Firefox
         </a>
-        <a href="https://chromewebstore.google.com/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
+        <a href="https://chrome.google.com/webstore/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
           target="_blank" rel="noopener" aria-label="Chrome Web Store listing">
-          <img src="icons/chrome.svg" alt="Chrome icon" /> Chrome
+          <img src="icons/chrome.svg" alt="Chrome icon" />
+          Chrome
         </a>
         <a href="https://adelpro.us.kg/open-muezzin/privacy-policy-eng.html" target="_blank" rel="noopener"
           aria-label="Privacy policy (English)">
-          <img src="icons/privacy.svg" alt="Privacy icon" /> Privacy (EN)
-        </a>
-        <a href="https://adelpro.us.kg/open-muezzin/privacy-policy-ar.html" target="_blank" rel="noopener"
-          aria-label="Privacy policy (Arabic)">
-          <img src="icons/privacy.svg" alt="Privacy icon" /> Privacy (AR)
+          <img src="icons/privacy.svg" alt="Privacy icon" />
+          Privacy
         </a>
       </nav>
     </footer>
+
   </div>
 
+  <!-- JSON-LD structured data -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Open Muezzin",
-    "description": "Open-source prayer times & Athan browser extension. No tracking, no ads, precise times for your location across Chrome and Firefox.",
-    "url": "https://openmuezzin.adelpro.us.kg",
-    "inLanguage": "en",
-    "publisher": {
-      "@type": "Organization",
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
       "name": "Open Muezzin",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://openmuezzin.adelpro.us.kg/icons/icon512.png"
-      }
-    },
-    "mainEntityOfPage": {
-      "@type": "SoftwareApplication",
-      "name": "Open Muezzin",
-      "description": "Precise prayer times tailored to your location. Open-source browser extension for Athan and daily prayer tracking.",
-      "applicationCategory": "Utilities",
-      "applicationSubCategory": "Religion",
-      "operatingSystem": "Chrome, Firefox",
-      "offers": [
-        {
-          "@type": "Offer",
-          "name": "Install on Firefox",
-          "url": "https://addons.mozilla.org/fr/firefox/addon/open-muezzin/"
-        },
-        {
-          "@type": "Offer",
-          "name": "Install on Chrome",
-          "url": "https://chromewebstore.google.com/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
+      "description": "Open-source prayer times & Athan browser extension. No tracking, no ads, precise times for your location across Chrome and Firefox.",
+      "url": "https://openmuezzin.adelpro.us.kg",
+      "inLanguage": "en",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Open Muezzin",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://openmuezzin.adelpro.us.kg/icons/icon512.png"
         }
-      ]
+      },
+      "mainEntityOfPage": {
+        "@type": "SoftwareApplication",
+        "name": "Open Muezzin",
+        "description": "Precise prayer times tailored to your location. Open-source browser extension for Athan and daily prayer tracking.",
+        "applicationCategory": "Utilities",
+        "applicationSubCategory": "Religion",
+        "operatingSystem": "Chrome, Firefox",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Install on Firefox",
+            "url": "https://addons.mozilla.org/fr/firefox/addon/open-muezzin/"
+          },
+          {
+            "@type": "Offer",
+            "name": "Install on Chrome",
+            "url": "https://chrome.google.com/webstore/detail/open-muezzin/ilohendlpeenomkadmlcddpnanomlacg?hl=en"
+          }
+        ]
+      }
     }
-  }
   </script>
 </body>
 
