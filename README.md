@@ -4,7 +4,7 @@
 
 Open-Muezzin is an open-source browser extension that provides accurate Islamic prayer times and location-based Athan notifications, with no tracking, no ads, and universal support for most browsers.
 
-## 🌟 Key Features
+## Key Features
 
 - **Accurate Prayer Times**: Uses the Adhan.js library for precise Islamic prayer time calculations
 - **Location-Based Notifications**: Automatic location detection with manual location override options
@@ -15,7 +15,7 @@ Open-Muezzin is an open-source browser extension that provides accurate Islamic 
 - **Responsive Design**: Modern UI with Tailwind CSS and dark mode support
 - **Multiple Calculation Methods**: Support for various Islamic calculation methods
 
-## 🚀 Technology Stack
+## Technology Stack
 
 - **Framework**: [Plasmo](https://www.plasmo.com/) - Next-gen browser extension framework
 - **Frontend**: React 18 with TypeScript
@@ -25,13 +25,13 @@ Open-Muezzin is an open-source browser extension that provides accurate Islamic 
 - **Build Tool**: Vite
 - **Package Manager**: pnpm
 
-## 📋 System Requirements
+## System Requirements
 
 - Node.js 16.x or higher
 - pnpm package manager
 - Modern web browser (Chrome 88+, Firefox 78+, Safari 14+)
 
-## 🛠️ Installation Instructions
+## Installation Instructions
 
 ### 1. Clone the Repository
 
@@ -122,7 +122,7 @@ The extension supports the following configuration options:
 - **Notifications**: Enable/disable Athan notifications
 - **Language**: Switch between Arabic and English interfaces
 
-## 🤝 Development Guidelines
+## Development Guidelines
 
 ### Contribution Workflow
 
@@ -167,7 +167,7 @@ src/
 └── assets/             # Static assets
 ```
 
-## 📦 Build & Deployment
+## Build & Deployment
 
 ### Production Build
 
@@ -190,7 +190,7 @@ The project includes GitHub Actions workflow for automated deployment:
 2. **Automated Builds**: Runs on `pnpm build` and `pnpm package`
 3. **Browser Store Submission**: Configured for Chrome Web Store and Firefox Add-ons
 
-## 📝 Additional Information
+## Additional Information
 
 ### License
 
