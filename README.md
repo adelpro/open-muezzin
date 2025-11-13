@@ -85,13 +85,12 @@ The extension provides two main interfaces:
 1. **Popup Interface** (click extension icon):
    - View current prayer times
    - See countdown to next prayer
-   - Quick access to settings
+   - See Current location
 
 2. **Options Page** (right-click → Options):
    - Configure calculation method
    - Set location preferences
    - Customize time format (12/24 hour)
-   - Manage notification settings
 
 ### Common Commands
 
@@ -119,9 +118,7 @@ The extension supports the following configuration options:
 - **Calculation Method**: Choose from various Islamic calculation methods (Muslim World League, ISNA, etc.)
 - **Location Settings**: Automatic location detection or manual city selection
 - **Time Format**: Toggle between 12-hour and 24-hour formats
-- **Notifications**: Enable/disable Athan notifications
-- **Language**: Switch between Arabic and English interfaces
-
+- 
 ## Development Guidelines
 
 ### Contribution Workflow
@@ -145,7 +142,7 @@ The extension supports the following configuration options:
 
 - **TypeScript**: Strict mode enabled with no implicit any
 - **React**: Functional components with hooks only
-- **File Naming**: snake_case for all files
+- **File Naming**: kebab_case for all files (for example: hero-component.tsx...)
 - **Imports**: Sorted imports with specific order
 - **Styling**: Tailwind CSS classes, no inline styles
 - **Accessibility**: All interactive elements must be keyboard and screen-reader friendly
