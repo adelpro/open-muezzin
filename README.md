@@ -76,7 +76,7 @@ pnpm dev:firefox
 3. Click "Load Temporary Add-on"
 4. Select the `build/firefox-mv3-dev/manifest.json` file
 
-## 📖 Usage Documentation
+## Usage Documentation
 
 ### Running the Application
 
