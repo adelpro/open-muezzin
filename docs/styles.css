@@ -1,4 +1,9 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700&display=swap");
+
 :root {
+  /* Colors */
   --bg: #ffffff;
   --fg: #0f172a;
   --fg-muted: #475569;
@@ -6,7 +11,8 @@
   --accent: #14b8a6;
   --accent-hover: #0f766e;
   --secondary: #e2b81a;
-  /* Font variables */
+
+  /* Typography */
   --font-size-base: 16px;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
@@ -25,10 +31,6 @@
   }
 }
 
-/* Enhanced font imports for Arabic and English */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
-
 /* Base typography */
 body {
   margin: 0;
@@ -39,23 +41,25 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  text-align: start;
-  /* Enhanced system font stack for English */
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-family: "Inter", sans-serif;
+  font-feature-settings:
+    "liga" 1,
+    "calt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  text-align: start;
 }
 
-/* Arabic-specific typography */
+/* Arabic adjustments */
 html[lang="ar"] body {
-  font-family: 'Noto Sans Arabic', 'SF Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+  font-family: "Tajawal", "Inter", sans-serif;
   line-height: 1.7;
   letter-spacing: -0.01em;
+  text-align: right;
 }
 
-/* Responsive font sizing */
+/* Responsive font scaling */
 @media (max-width: 768px) {
   :root {
     --font-size-base: 15px;
@@ -63,12 +67,13 @@ html[lang="ar"] body {
     --font-size-xl: 1.125rem;
     --font-size-2xl: 1.375rem;
   }
-  
+
   html[lang="ar"] body {
     line-height: 1.75;
   }
 }
 
+/* Container */
 .container {
   flex: 1;
   max-width: 1140px;
@@ -76,15 +81,12 @@ html[lang="ar"] body {
   padding: 32px 24px;
 }
 
+/* Header */
 header {
   text-align: center;
   padding: 1rem 0;
 }
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+
 .site-name {
   font-weight: 700;
   font-size: var(--font-size-2xl);
@@ -96,6 +98,7 @@ html[lang="ar"] .site-name {
   font-weight: 800;
   letter-spacing: normal;
 }
+
 .tagline {
   color: var(--fg-muted);
   margin-top: 0.25rem;
@@ -109,10 +112,12 @@ html[lang="ar"] .tagline {
   line-height: 1.6;
 }
 
+/* Hero Section */
 .hero {
   text-align: center;
   padding: 80px 0;
 }
+
 .hero-title {
   font-size: var(--font-size-3xl);
   font-weight: 800;
@@ -122,13 +127,13 @@ html[lang="ar"] .tagline {
 }
 
 html[lang="ar"] .hero-title {
-  font-weight: 800;
-  letter-spacing: normal;
   line-height: 1.3;
+  letter-spacing: normal;
 }
+
 .hero-subtitle {
   color: var(--fg-muted);
-  font-size: var(--font-size-lg);
+  font-size: clamp(1rem, 2vw, 1.125rem);
   max-width: 600px;
   margin: 1rem auto 0;
   font-weight: 400;
@@ -136,10 +141,10 @@ html[lang="ar"] .hero-title {
 }
 
 html[lang="ar"] .hero-subtitle {
-  font-size: 1.0625rem;
   line-height: 1.7;
 }
 
+/* CTA Buttons */
 .cta-group {
   display: flex;
   flex-wrap: wrap;
@@ -169,43 +174,56 @@ html[lang="ar"] .btn {
   font-weight: 700;
   padding: 15px 24px;
 }
+
 .btn:hover {
   transform: translateY(-2px);
 }
+
 .btn:focus-visible {
-  /* ✅ a11y */
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
+  border-radius: 8px;
 }
 
 .btn-primary {
   background: var(--accent);
   color: #fff;
 }
+
 .btn-secondary {
-  background: var(--secondary); /* ✅ improved contrast */
-  color: #0f172a;
+  background: var(--secondary);
+  color: var(--fg);
 }
 
-/* ✅ RTL-safe: use logical properties */
 .install-icon {
   width: 20px;
   height: 20px;
-  margin-inline-end: 5px; /* instead of margin-right */
+  margin-inline-end: 5px;
 }
 
+/* Features */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
   margin-top: 48px;
 }
+
 .feature-card {
   background: var(--card);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
 .feature-card h3 {
   display: flex;
   justify-content: center;
@@ -221,63 +239,16 @@ html[lang="ar"] .feature-card h3 {
   font-weight: 700;
   font-size: 1.0625rem;
 }
+
 .feature-card svg {
-  width: 20px;
-  height: 20px;
+  width: clamp(20px, 2vw, 32px);
+  height: clamp(20px, 2vw, 32px);
   fill: currentColor;
 }
+
 .feature-card p {
   color: var(--fg-muted);
   margin: 0;
-}
-
-.footer {
-  text-align: center;
-  padding: 1.5rem 0;
-  background: var(--card);
-  color: var(--fg-muted);
-  border-top: 1px solid var(--fg-muted);
-  font-size: 0.9rem;
-}
-
-/* Responsive font sizing */
-@media (max-width: 768px) {
-  :root {
-    --font-size-base: 15px;
-    --font-size-lg: 1.0625rem;
-    --font-size-xl: 1.125rem;
-    --font-size-2xl: 1.375rem;
-  }
-  
-  html[lang="ar"] body {
-    line-height: 1.75;
-  }
-}
-
-/* Arabic-specific text improvements */
-html[lang="ar"] {
-  text-rendering: optimizeLegibility;
-  -webkit-font-feature-settings: "liga" on, "calt" on;
-  font-feature-settings: "liga" on, "calt" on;
-}
-
-html[lang="ar"] .hero-title,
-html[lang="ar"] .site-name {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-/* Enhanced focus states for accessibility */
-html[lang="ar"] .btn:focus-visible,
-html[lang="en"] .btn:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* Improved line heights for better readability */
-.feature-card p {
   line-height: 1.65;
   font-size: 0.9375rem;
 }
@@ -287,45 +258,14 @@ html[lang="ar"] .feature-card p {
   font-size: 0.875rem;
 }
 
-/* Responsive adjustments for Arabic */
-@media (max-width: 480px) {
-  html[lang="ar"] .hero-title {
-    font-size: clamp(28px, 6vw, 36px);
-  }
-  
-  html[lang="ar"] .site-name {
-    font-size: 1.25rem;
-  }
-  
-  html[lang="ar"] .tagline {
-    font-size: 0.9375rem;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root {
-    --fg-muted: #000000;
-    --accent: #0066cc;
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --fg-muted: #ffffff;
-      --accent: #66ccff;
-    }
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .btn {
-    transition: none;
-  }
-  
-  .btn:hover {
-    transform: none;
-  }
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 1.5rem 0;
+  background: var(--card);
+  color: var(--fg-muted);
+  border-top: 1px solid var(--fg-muted);
+  font-size: 0.9rem;
 }
 
 .footer-content {
@@ -340,10 +280,12 @@ html[lang="ar"] .feature-card p {
   font-weight: 500;
   transition: color 0.2s ease;
 }
+
 .footer-lang a:hover,
 .footer-links a:hover {
   color: var(--accent);
 }
+
 .footer-lang a.active {
   background: var(--accent);
   color: #fff;
@@ -355,10 +297,74 @@ html[lang="ar"] .feature-card p {
   display: flex;
   gap: 1.5rem;
 }
+
 .footer-links a {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   color: var(--fg-muted);
   text-decoration: none;
+}
+
+/* RTL & Arabic adjustments */
+html[lang="ar"] {
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings:
+    "liga" on,
+    "calt" on;
+  font-feature-settings:
+    "liga" on,
+    "calt" on;
+}
+
+html[lang="ar"] .hero-title,
+html[lang="ar"] .site-name {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  html[lang="ar"] .hero-title {
+    font-size: clamp(28px, 6vw, 36px);
+  }
+
+  html[lang="ar"] .site-name {
+    font-size: 1.25rem;
+  }
+
+  html[lang="ar"] .tagline {
+    font-size: 0.9375rem;
+  }
+
+  .cta-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* High contrast */
+@media (prefers-contrast: high) {
+  :root {
+    --fg-muted: #000;
+    --accent: #0066cc;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg-muted: #fff;
+      --accent: #66ccff;
+    }
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn:hover,
+  .feature-card {
+    transition: none !important;
+    transform: none !important;
+  }
 }
