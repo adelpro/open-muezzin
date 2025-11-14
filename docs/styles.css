@@ -5,8 +5,15 @@
   --card: #f9fafb;
   --accent: #14b8a6;
   --accent-hover: #0f766e;
-  /* ✅ Improved yellow for contrast */
-  --secondary: #e2b81a; /* darker gold */
+  --secondary: #e2b81a;
+  /* Font variables */
+  --font-size-base: 16px;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: clamp(32px, 5vw, 48px);
+  --line-height-base: 1.6;
+  --line-height-tight: 1.4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,21 +25,48 @@
   }
 }
 
+/* Enhanced font imports for Arabic and English */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
+
+/* Base typography */
 body {
   margin: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif; /* ✅ more robust */
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
   background: var(--bg);
   color: var(--fg);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* ✅ Ensure RTL text direction */
-  text-align: start; /* respects dir */
+  text-align: start;
+  /* Enhanced system font stack for English */
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Arabic-specific typography */
+html[lang="ar"] body {
+  font-family: 'Noto Sans Arabic', 'SF Arabic', -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+}
+
+/* Responsive font sizing */
+@media (max-width: 768px) {
+  :root {
+    --font-size-base: 15px;
+    --font-size-lg: 1.0625rem;
+    --font-size-xl: 1.125rem;
+    --font-size-2xl: 1.375rem;
+  }
+  
+  html[lang="ar"] body {
+    line-height: 1.75;
+  }
 }
 
 .container {
@@ -53,12 +87,26 @@ header {
 }
 .site-name {
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   color: var(--fg);
+  letter-spacing: -0.025em;
+}
+
+html[lang="ar"] .site-name {
+  font-weight: 800;
+  letter-spacing: normal;
 }
 .tagline {
   color: var(--fg-muted);
   margin-top: 0.25rem;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  line-height: var(--line-height-tight);
+}
+
+html[lang="ar"] .tagline {
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .hero {
@@ -66,15 +114,30 @@ header {
   padding: 80px 0;
 }
 .hero-title {
-  font-size: clamp(32px, 5vw, 48px);
+  font-size: var(--font-size-3xl);
   font-weight: 800;
   margin: 0;
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+html[lang="ar"] .hero-title {
+  font-weight: 800;
+  letter-spacing: normal;
+  line-height: 1.3;
 }
 .hero-subtitle {
   color: var(--fg-muted);
-  font-size: 1rem;
+  font-size: var(--font-size-lg);
   max-width: 600px;
   margin: 1rem auto 0;
+  font-weight: 400;
+  line-height: var(--line-height-base);
+}
+
+html[lang="ar"] .hero-subtitle {
+  font-size: 1.0625rem;
+  line-height: 1.7;
 }
 
 .cta-group {
@@ -89,15 +152,22 @@ header {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: 14px 24px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: var(--font-size-base);
   border: none;
   cursor: pointer;
   text-decoration: none;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
+  line-height: var(--line-height-tight);
+}
+
+html[lang="ar"] .btn {
+  font-weight: 700;
+  padding: 15px 24px;
 }
 .btn:hover {
   transform: translateY(-2px);
@@ -142,7 +212,14 @@ header {
   align-items: center;
   gap: 8px;
   margin: 0 0 12px;
-  font-size: 1.125rem;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+}
+
+html[lang="ar"] .feature-card h3 {
+  font-weight: 700;
+  font-size: 1.0625rem;
 }
 .feature-card svg {
   width: 20px;
@@ -161,6 +238,94 @@ header {
   color: var(--fg-muted);
   border-top: 1px solid var(--fg-muted);
   font-size: 0.9rem;
+}
+
+/* Responsive font sizing */
+@media (max-width: 768px) {
+  :root {
+    --font-size-base: 15px;
+    --font-size-lg: 1.0625rem;
+    --font-size-xl: 1.125rem;
+    --font-size-2xl: 1.375rem;
+  }
+  
+  html[lang="ar"] body {
+    line-height: 1.75;
+  }
+}
+
+/* Arabic-specific text improvements */
+html[lang="ar"] {
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings: "liga" on, "calt" on;
+  font-feature-settings: "liga" on, "calt" on;
+}
+
+html[lang="ar"] .hero-title,
+html[lang="ar"] .site-name {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Enhanced focus states for accessibility */
+html[lang="ar"] .btn:focus-visible,
+html[lang="en"] .btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Improved line heights for better readability */
+.feature-card p {
+  line-height: 1.65;
+  font-size: 0.9375rem;
+}
+
+html[lang="ar"] .feature-card p {
+  line-height: 1.8;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments for Arabic */
+@media (max-width: 480px) {
+  html[lang="ar"] .hero-title {
+    font-size: clamp(28px, 6vw, 36px);
+  }
+  
+  html[lang="ar"] .site-name {
+    font-size: 1.25rem;
+  }
+  
+  html[lang="ar"] .tagline {
+    font-size: 0.9375rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --fg-muted: #000000;
+    --accent: #0066cc;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fg-muted: #ffffff;
+      --accent: #66ccff;
+    }
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
 }
 
 .footer-content {

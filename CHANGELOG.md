@@ -5,6 +5,10 @@ This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
 ## [v0.0.3] - 2025-11-14
 
+### Features
+
+feat(ui): enhance typography and add multilingual support in the documentation
+
 ## [v0.0.2] - 2025-11-09
 
 ### Features
