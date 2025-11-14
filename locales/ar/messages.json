@@ -106,5 +106,17 @@
   "openLocationSettings": {
     "message": "فتح إعدادات الموقع",
     "description": "زر لفتح إعدادات الموقع."
+  },
+  "aboutPage": {
+    "message": "حول المؤذن",
+    "description": "زر لفتح صفحة حول المؤذن."
+  },
+  "privacyPolicy": {
+    "message": "سياسة الخصوصية",
+    "description": "زر لفتح سياسة الخصوصية."
+  },
+  "extensionHome": {
+    "message": "الصفحة الرئيسية",
+    "description": "زر لفتح صفحة الرئيسية."
   }
 }

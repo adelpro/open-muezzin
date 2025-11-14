@@ -6,6 +6,7 @@ import { debounce } from "@/lib/debounce"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import Logo from "url:~/assets/icon512.png"
 
 type NominatimResult = {
   lat: string
@@ -25,7 +26,6 @@ export default function Options() {
     setTwentyFourHourFormat
   } = useSettingsStore()
 
-  // allow aborting in-flight reverse geocode requests
   const reverseControllerRef = useRef<AbortController | null>(null)
 
   const [cityInput, setCityInput] = useState(manualLocation?.address || "")
@@ -46,15 +46,21 @@ export default function Options() {
         setIsLoading(true)
         setError(null)
         setSearchResults(null)
+
         const lang = chrome.i18n.getUILanguage() || "ar"
+
         const res = await fetch(
           `${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(
             searchQuery
           )}&limit=5&accept-language=${lang}`,
-          { headers: { "User-Agent": "Open-Muezzin-Extension/1.0" }, signal }
+          {
+            headers: { "User-Agent": "Open-Muezzin-Extension/1.0" },
+            signal
+          }
         )
 
         if (!res.ok) throw new Error("Network response was not ok")
+
         const data: NominatimResult[] = await res.json()
         setSearchResults(data.length > 0 ? data : [])
       } catch (err) {
@@ -105,119 +111,152 @@ export default function Options() {
   }, [success, error])
 
   return (
-    <div className="flex justify-center items-center w-full h-svh" dir={DIR}>
-      <div className="relative p-6 mx-auto w-full max-w-md bg-white rounded-2xl shadow-lg">
-        <h1 className="mb-6 w-full text-xl font-bold text-center text-gray-800">
+    <div
+      className="flex flex-col w-full text-gray-800 bg-gray-50 min-h-svh"
+      dir={DIR}>
+      {/* Header */}
+      <header className="flex gap-3 items-center px-5 py-4 bg-white shadow-sm">
+        <img src={Logo} alt="Open Muezzin" className="w-9 h-9 rounded-md" />
+        <h1 className="text-xl font-semibold">
           {chrome.i18n.getMessage("optionsTitle")}
         </h1>
+      </header>
 
-        {/* Calculation Method */}
-        <label className="block mb-2 font-medium text-gray-700">
-          {chrome.i18n.getMessage("calculationMethod")}
-        </label>
-        <select
-          value={calculationMethod}
-          onChange={(event) =>
-            setCalculationMethod(
-              event.target.value as keyof typeof CalculationMethod
-            )
-          }
-          className="p-2 mb-4 w-full rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-          {Object.entries(CalculationMethod).map(([key]) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+      {/* Main */}
+      <main className="flex flex-col gap-8 px-5 py-6 mx-auto w-full max-w-md">
+        {/* SECTION: Calculation */}
+        <section className="flex flex-col gap-4 p-4 bg-white rounded-xl shadow-sm">
+          <label className="font-medium">
+            {chrome.i18n.getMessage("calculationMethod")}
+          </label>
 
-        {/* 24 Hour Toggle */}
-        <label className="flex gap-3 items-center mb-4">
-          <input
-            type="checkbox"
-            checked={twentyFourHourFormat}
-            onChange={() => setTwentyFourHourFormat(!twentyFourHourFormat)}
-            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
-          />
-          <span className="font-medium text-gray-700">
+          <select
+            value={calculationMethod}
+            onChange={(event) =>
+              setCalculationMethod(
+                event.target.value as keyof typeof CalculationMethod
+              )
+            }
+            className="p-2 w-full bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500">
+            {Object.entries(CalculationMethod).map(([key]) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
+
+          <label className="flex gap-3 items-center">
+            <input
+              type="checkbox"
+              checked={twentyFourHourFormat}
+              onChange={() => setTwentyFourHourFormat(!twentyFourHourFormat)}
+              className="w-5 h-5 rounded border-gray-300 text-primary-600"
+            />
             {chrome.i18n.getMessage("use24HourFormat")}
-          </span>
-        </label>
+          </label>
+        </section>
 
-        {/* Auto Location Toggle */}
-        <label className="flex gap-3 items-center mb-4">
-          <input
-            type="checkbox"
-            checked={autoLocation}
-            onChange={() => setAutoLocation(!autoLocation)}
-            className="w-5 h-5 text-blue-500 rounded border-gray-300 focus:ring-blue-400"
-          />
-          <span className="font-medium text-gray-700">
+        {/* SECTION: Location */}
+        <section className="flex flex-col gap-4 p-4 bg-white rounded-xl shadow-sm">
+          <label className="flex gap-3 items-center">
+            <input
+              type="checkbox"
+              checked={autoLocation}
+              onChange={() => setAutoLocation(!autoLocation)}
+              className="w-5 h-5 rounded border-gray-300 text-primary-600"
+            />
             {chrome.i18n.getMessage("useAutoLocation")}
-          </span>
-        </label>
+          </label>
 
-        {/* Manual Location Input - only show when auto-location is off */}
-        {!autoLocation && (
-          <div className="relative">
-            <label className="block mb-2 font-medium text-gray-700">
-              {chrome.i18n.getMessage("manualLocationCity")}
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={cityInput}
-                onChange={(e) => {
-                  setCityInput(e.target.value)
-                  setSuccess(null)
-                  setError(null)
-                }}
-                placeholder={chrome.i18n.getMessage("enterCityName")}
-                className="relative z-10 p-2 pr-8 mb-4 w-full rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
+          {!autoLocation && (
+            <div className="flex relative flex-col gap-1">
+              <label className="font-medium">
+                {chrome.i18n.getMessage("manualLocationCity")}
+              </label>
 
-              {isLoading && (
-                <span className="absolute right-2 top-1/2 w-3 h-3 rounded-full border-2 border-blue-500 animate-spin -translate-y-1/2 border-t-transparent"></span>
-              )}
-            </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={cityInput}
+                  onChange={(event) => {
+                    setCityInput(event.target.value)
+                    setError(null)
+                    setSuccess(null)
+                  }}
+                  placeholder={chrome.i18n.getMessage("enterCityName")}
+                  className="p-2 pr-9 w-full bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500"
+                />
 
-            {!autoLocation && (searchResults || isLoading) && (
-              <div className="absolute right-0 left-0 top-16 z-20 bg-white rounded-lg border border-gray-200 shadow-xl">
-                {isLoading ? (
-                  <p className="flex gap-2 items-center p-3 text-sm text-gray-500">
-                    <span className="w-3 h-3 rounded-full border-2 border-blue-500 animate-spin border-t-transparent" />
-                    {chrome.i18n.getMessage("Searching")}
-                  </p>
-                ) : searchResults && searchResults.length > 0 ? (
-                  <ul className="overflow-y-auto max-h-60">
-                    {searchResults.map((result, index) => (
-                      <li
-                        key={result.lat + result.lon + index}
-                        onClick={() => handleSelectLocation(result)}
-                        className="p-3 text-gray-800 border-b border-gray-100 cursor-pointer hover:bg-gray-100 last:border-b-0">
-                        {result.display_name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="p-3 text-sm text-gray-500">
-                    {`${chrome.i18n.getMessage("noResultsFound")} "${cityInput}".`}
-                  </p>
+                {isLoading && (
+                  <span className="absolute right-2 top-1/2 w-3 h-3 rounded-full border-2 animate-spin -translate-y-1/2 border-primary-500 border-t-transparent" />
                 )}
               </div>
-            )}
 
-            {/* Messages */}
-            <div aria-live="polite" className="mt-1">
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              {success && <p className="text-sm text-green-500">{success}</p>}
+              {(!autoLocation && searchResults) || isLoading ? (
+                <div className="absolute right-0 left-0 top-20 z-20 bg-white rounded-lg border border-gray-200 shadow-lg">
+                  {isLoading ? (
+                    <p className="flex gap-2 items-center p-3 text-sm text-gray-500">
+                      <span className="w-3 h-3 rounded-full border-2 animate-spin border-primary-500 border-t-transparent" />
+                      {chrome.i18n.getMessage("Searching")}
+                    </p>
+                  ) : searchResults && searchResults.length > 0 ? (
+                    <ul className="overflow-y-auto max-h-60">
+                      {searchResults.map((result, index) => (
+                        <li
+                          key={result.lat + result.lon + index}
+                          onClick={() => handleSelectLocation(result)}
+                          className="p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-100">
+                          {result.display_name}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="p-3 text-sm text-gray-500">
+                      {chrome.i18n.getMessage("noResultsFound")} "{cityInput}"
+                    </p>
+                  )}
+                </div>
+              ) : null}
+
+              {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+              {success && (
+                <p className="mt-1 text-sm text-green-600">{success}</p>
+              )}
             </div>
-          </div>
-        )}
+          )}
+        </section>
 
-        <p className="mt-5 w-full text-sm text-center text-gray-500">
+        <p className="text-sm text-center text-gray-400">
           {chrome.i18n.getMessage("poweredBy")}
         </p>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-5 mt-auto">
+        <div className="flex gap-5 justify-center text-sm text-gray-600">
+          <a
+            href="https://github.com/adelpro/open-muezzin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-600 hover:underline">
+            {chrome.i18n.getMessage("githubRepo")}
+          </a>
+
+          <a
+            href="https://openmuezzin.adelpro.us.kg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-600 hover:underline">
+            {chrome.i18n.getMessage("extensionHome")}
+          </a>
+
+          <a
+            href={chrome.runtime.getURL("privacy.html")}
+            className="hover:text-primary-600 hover:underline">
+            {chrome.i18n.getMessage("privacyPolicy")}
+          </a>
+        </div>
+      </footer>
     </div>
   )
 }

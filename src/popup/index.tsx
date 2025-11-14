@@ -6,6 +6,7 @@ import { FooterSkeleton } from "@/components/footer-skeleton"
 import { Header } from "@/components/header"
 import { PrayerTimesCard } from "@/components/prayer-times-card"
 import { PrayerTimesSkeleton } from "@/components/prayer-times-skeleton"
+import SettingsButton from "@/components/settings-button"
 import { COORDINATES_FALLBACK } from "@/constants/coodinates-fallback"
 import { useLocation } from "@/hooks/use-location"
 import { useSettingsStore } from "@/stores/settings-store"
@@ -24,8 +25,11 @@ export default function IndexPopup() {
   } = useLocation(COORDINATES_FALLBACK)
 
   return (
-    <div className="flex flex-col items-center justify-center w-[600px] h-[600px]">
+    <div className="relative flex flex-col items-center justify-center w-[600px] h-[600px]">
       <Header />
+      <div className="absolute top-1 end-1">
+        <SettingsButton />
+      </div>
       {/* TODO add Adhan Player */}
       {/* <AdhenPlayer /> */}
       {(status === "loading" || loadingCoordinates) && <PrayerTimesSkeleton />}

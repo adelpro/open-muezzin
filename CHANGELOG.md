@@ -1,58 +1,62 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented below.  
+This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
-The format is based on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [v0.0.3] - 2025-11-14
 
-## [v0.0.2] - 2024-12-19
+## [v0.0.2] - 2025-11-09
 
-### 🚧 In Development
+### Features
 
-This version is currently under development with upcoming features and improvements.
+- feat: add footer links to options page (GitHub, extension home, privacy policy)
+
+### Fixes
+
+- fix: correct location search debounce issue to avoid unnecessary API calls
+
+### Refactors
+
+- refactor: simplify popup layout structure for better UI and readability
+
+### Chores
+
+- chore: update dependencies
 
 ## [v0.0.1] - 2024-01-01
 
-### ✨ Features
+### Features
 
-- **Extension Architecture**: Initial setup of Plasmo framework with React and TypeScript
-- **Prayer Times Calculation**: Integrated Adhan.js library for accurate Islamic prayer times
-- **User Interface**:
-  - Implemented popup interface with prayer times display
-  - Created comprehensive options page with settings management
-  - Added responsive design with Tailwind CSS
-- **Location Services**:
-  - Automatic location detection using browser geolocation API
-  - Manual location search with Nominatim API integration
-  - In-memory caching for optimized reverse geocoding
-- **Prayer Time Display**:
-  - Real-time countdown to next prayer
-  - Current prayer highlighting with visual indicators
-  - Support for 12/24 hour format toggle
-- **Browser Extension Features**:
-  - Extension badge showing time to next prayer
-  - Background service for continuous prayer time monitoring
-  - Localized interface with Arabic and English support
-- **Configuration**:
-  - Multiple calculation methods (Muslim World League, etc.)
-  - Customizable prayer time settings
-  - Persistent storage using browser extension storage API
+- feat: initial setup of Plasmo framework with React and TypeScript
+- feat: integrate Adhan.js for Islamic prayer times calculation
+- feat: implement popup interface with prayer times display
+- feat: create comprehensive options page with settings management
+- feat: responsive design with Tailwind CSS
+- feat: automatic location detection using browser geolocation API
+- feat: manual location search with Nominatim API integration
+- feat: real-time countdown to next prayer and current prayer highlighting
+- feat: support 12/24 hour format toggle
+- feat: extension badge showing time to next prayer
+- feat: background service for continuous prayer time monitoring
+- feat: localized interface with Arabic and English support
+- feat: multiple calculation methods and customizable prayer time settings
+- feat: persistent storage using browser extension storage API
 
-### 🔧 Development Setup
+### Development Setup
 
-- **Code Quality**: Configured ESLint and Prettier for consistent code formatting
-- **Build System**: Integrated PostCSS and Tailwind CSS for styling
-- **Type Safety**: Full TypeScript implementation with strict type checking
-- **Project Structure**: Organized component-based architecture with proper separation of concerns
+- chore: configure ESLint and Prettier for consistent code formatting
+- chore: integrate PostCSS and Tailwind CSS for styling
+- chore: full TypeScript implementation with strict type checking
+- chore: organize component-based architecture with separation of concerns
 
-### 📦 Assets
+### Assets
 
-- **Branding**: Added extension icon (512px)
-- **Audio**: Integrated Adhan notification sound (adhan-alger.ogg)
-- **Design System**: Established color palette and design tokens
+- feat: add extension icon (512px)
+- feat: integrate Adhan notification sound (adhan-alger.ogg)
+- chore: establish color palette and design tokens
 
-### 📚 Documentation
+### Documentation
 
-- **Project Documentation**: Created comprehensive README.md with setup instructions
-- **Internationalization**: Added locale support for Arabic and English languages
-- **Browser Compatibility**: Configured for Chrome MV3 and Firefox support
+- chore: create comprehensive README.md with setup instructions
+- feat: add locale support for Arabic and English languages
+- chore: configure for Chrome MV3 and Firefox support

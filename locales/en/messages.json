@@ -106,5 +106,17 @@
   "openLocationSettings": {
     "message": "Open Location Settings",
     "description": "Link label to open browser location settings."
+  },
+  "aboutPage": {
+    "message": "About Page",
+    "description": "Link label to open about page."
+  },
+  "privacyPolicy": {
+    "message": "Privacy Policy",
+    "description": "Link label to open privacy policy page."
+  },
+  "extensionHome": {
+    "message": "Home",
+    "description": "Link label to open extension home page."
   }
 }
