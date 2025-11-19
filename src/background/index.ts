@@ -26,43 +26,58 @@ function hideBadge() {
   }
 }
 
-// Coordinates
-const getCoordinates = async (): Promise<Coordinates | null> => {
+// Coordinates & Settings
+const getSettings = async (): Promise<{
+  coordinates: Coordinates | null
+  notificationsEnabled: boolean
+  calculationMethod: keyof typeof CalculationMethod | null
+}> => {
   return new Promise((resolve) => {
     chrome.storage.local.get("open-muezzin-settings", (result) => {
-      const settingsRaw = result["open-muezzin-settings"];
-      if (!settingsRaw) return resolve(null);
+      const settingsRaw = result["open-muezzin-settings"]
+      if (!settingsRaw)
+        return resolve({ coordinates: null, notificationsEnabled: true, calculationMethod: null })
 
       try {
-        const settings = JSON.parse(settingsRaw);
-        const coords = settings.state?.cachedCoordinates ?? null;
-        resolve(coords);
+        const settings = JSON.parse(settingsRaw)
+        const cachedCoordinates = settings.state?.cachedCoordinates ?? null
+        const coordinates = cachedCoordinates.coordinates
+        console.log({ cachedCoordinates })
+        const notificationsEnabled =
+          settings.state?.notificationsEnabled ?? true
+        resolve({ coordinates, notificationsEnabled, calculationMethod: settings.state?.calculationMethod ?? null })
       } catch (err) {
-        console.error("Failed to parse settings", err);
-        resolve(null);
+        console.error("Failed to parse settings", err)
+        resolve({ coordinates: null, notificationsEnabled: true, calculationMethod: null })
       }
-    });
-  });
-
+    })
+  })
 }
+
+let lastNotifiedPrayer: string | null = null
 
 // Prayer Check
 async function updatePrayerBadge() {
   const now = new Date()
-  const coordinates = await getCoordinates()
+  const { coordinates, notificationsEnabled, calculationMethod } = await getSettings()
 
   if (!coordinates) {
     hideBadge()
     return
   }
+  const method = CalculationMethod[calculationMethod as keyof typeof CalculationMethod]();
 
-  const method = CalculationMethod.MuslimWorldLeague()
   const prayerTimes = new PrayerTimes(coordinates, now, method)
+
+  console.log({ prayerTimes })
+
+
 
   const prayers = PRAYER_ORDER.map((name) => ({
     name,
     time: prayerTimes[name as keyof typeof prayerTimes] as Date
   }))
+
 
   const closestPrayer = prayers.find((prayer) => {
     const diffMinutes = (prayer.time.getTime() - now.getTime()) / 60000
@@ -75,37 +90,54 @@ async function updatePrayerBadge() {
     )
     showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
 
-    // TODO Fire notification exactly at prayer time
+    // Notification Logic
+    if (notificationsEnabled && diffMinutes === 0) {
+      // Check if we already notified for this prayer today
+      const prayerKey = `${closestPrayer.name}-${now.getDate()}`
+      if (lastNotifiedPrayer !== prayerKey) {
+        console.log("Prayer time notification fired for", closestPrayer.name)
 
-    /*     console.log("Prayer time notification fired")
-        chrome.notifications.create({
-          type: "basic",
+        const notificationOptions = {
+          type: "basic" as const,
           iconUrl: chrome.runtime.getURL("assets/icon512.png"),
           title: "Prayer Time",
           message: `It's time for ${closestPrayer.name} prayer`,
           priority: 2
-        }) */
+        }
 
-
-
+        // Use callback for cross-browser compatibility (Firefox/Chrome)
+        try {
+          chrome.notifications.create(
+            `prayer-${prayerKey}`,
+            notificationOptions,
+            (notificationId) => {
+              if (chrome.runtime.lastError) {
+                console.error("Notification error:", chrome.runtime.lastError)
+              } else {
+                lastNotifiedPrayer = prayerKey
+              }
+            }
+          )
+        } catch (e) {
+          console.error("Failed to create notification", e)
+        }
+      }
+    }
   } else {
     hideBadge()
   }
 }
 
-//Storage Change Listener
-// Storage listener: only triggers on coordinates change
+// Storage Change Listener
+// Storage listener: triggers on coordinates or settings change
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "local") return
   const change = changes["open-muezzin-settings"]
   if (!change) return
 
   try {
-    const oldCoords = change.oldValue?.state?.cachedCoordinates
-    const newCoords = change.newValue?.state?.cachedCoordinates
-    if (JSON.stringify(oldCoords) !== JSON.stringify(newCoords)) {
-      updatePrayerBadge()
-    }
+    // We just update whenever settings change to be safe
+    updatePrayerBadge()
   } catch {
     // ignore parse errors
   }

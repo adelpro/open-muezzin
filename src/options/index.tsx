@@ -17,7 +17,9 @@ export default function Options() {
     setManualLocation,
     setAutoLocation,
     twentyFourHourFormat,
-    setTwentyFourHourFormat
+    setTwentyFourHourFormat,
+    notificationsEnabled,
+    setNotificationsEnabled
   } = useSettingsStore()
 
   const reverseControllerRef = useRef<AbortController | null>(null)
@@ -140,6 +142,16 @@ export default function Options() {
               className="w-5 h-5 rounded border-gray-300 text-primary-600"
             />
             {chrome.i18n.getMessage("use24HourFormat")}
+          </label>
+
+          <label className="flex gap-3 items-center">
+            <input
+              type="checkbox"
+              checked={notificationsEnabled}
+              onChange={() => setNotificationsEnabled(!notificationsEnabled)}
+              className="w-5 h-5 rounded border-gray-300 text-primary-600"
+            />
+            {chrome.i18n.getMessage("enableNotifications")}
           </label>
         </section>
 

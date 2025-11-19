@@ -71,6 +71,10 @@
     "message": "استخدام تنسيق 24 ساعة",
     "description": "تسمية لتبديل تنسيق 24 ساعة."
   },
+  "enableNotifications": {
+    "message": "تفعيل الإشعارات",
+    "description": "تسمية لتبديل الإشعارات."
+  },
   "useAutoLocation": {
     "message": "استخدام الموقع التلقائي",
     "description": "تسمية لتبديل خيار الموقع التلقائي."

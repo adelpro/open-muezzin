@@ -47,7 +47,8 @@
     "permissions": [
       "geolocation",
       "storage",
-      "alarms"
+      "alarms",
+      "notifications"
     ],
     "host_permissions": [
       "https://nominatim.openstreetmap.org/*"
