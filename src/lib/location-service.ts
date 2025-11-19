@@ -8,7 +8,7 @@ export type NominatimResult = {
   address?: {
     city?: string
     town?: string
-    [key: string]: any
+    [key: string]: unknown
   }
 }
 
@@ -16,26 +16,21 @@ const HEADERS = {
   "User-Agent": "Open-Muezzin-Extension/1.0"
 }
 
-/**
- * Reverse geocodes coordinates to get an address/city name.
- */
+const getLang = () => chrome.i18n.getUILanguage() || "ar"
+
 export async function reverseGeocode(
   coords: Coordinates,
   signal?: AbortSignal
 ): Promise<string> {
-  const lang = chrome.i18n.getUILanguage() || "ar"
-  const url = `${NOMINATIM_API_URL}/reverse?format=json&accept-language=${lang}&lat=${coords.latitude}&lon=${coords.longitude}`
+  const url = `${NOMINATIM_API_URL}/reverse?format=json&accept-language=${getLang()}&lat=${coords.latitude}&lon=${coords.longitude}`
 
-  const res = await fetch(url, {
-    headers: HEADERS,
-    signal
-  })
+  const response = await fetch(url, { headers: HEADERS, signal })
 
-  if (!res.ok) {
-    throw new Error(`Reverse geocoding failed: ${res.statusText}`)
+  if (!response.ok) {
+    throw new Error(`Reverse geocoding failed: ${response.statusText}`)
   }
 
-  const data: NominatimResult = await res.json()
+  const data = (await response.json()) as NominatimResult
 
   return (
     data.address?.city ||
@@ -45,27 +40,19 @@ export async function reverseGeocode(
   )
 }
 
-/**
- * Searches for a city by name.
- */
 export async function searchCity(
   query: string,
   signal?: AbortSignal
 ): Promise<NominatimResult[]> {
-  const lang = chrome.i18n.getUILanguage() || "ar"
-  const url = `${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(
+  const url = `${NOMINATIM_API_URL}/search?format=json&limit=5&accept-language=${getLang()}&q=${encodeURIComponent(
     query
-  )}&limit=5&accept-language=${lang}`
+  )}`
 
-  const res = await fetch(url, {
-    headers: HEADERS,
-    signal
-  })
+  const response = await fetch(url, { headers: HEADERS, signal })
 
-  if (!res.ok) {
-    throw new Error(`City search failed: ${res.statusText}`)
+  if (!response.ok) {
+    throw new Error(`City search failed: ${response.statusText}`)
   }
 
-  const data: NominatimResult[] = await res.json()
-  return data
+  return (await response.json()) as NominatimResult[]
 }

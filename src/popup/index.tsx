@@ -15,14 +15,8 @@ export default function IndexPopup() {
   // select only autoLocation so the popup doesn't re-render for unrelated store changes
   const autoLocation = useSettingsStore((s) => s.autoLocation)
 
-  const {
-    coordinates,
-    loadingCoordinates,
-    address,
-    status,
-    error,
-    requestLocation
-  } = useLocation(COORDINATES_FALLBACK)
+  const { coordinates, address, status, error, requestLocation } =
+    useLocation(COORDINATES_FALLBACK)
 
   return (
     <div className="relative flex flex-col items-center justify-center w-[600px] h-[600px]">
@@ -32,8 +26,8 @@ export default function IndexPopup() {
       </div>
       {/* TODO add Adhan Player */}
       {/* <AdhenPlayer /> */}
-      {(status === "loading" || loadingCoordinates) && <PrayerTimesSkeleton />}
-      {status === "ready" && !loadingCoordinates ? (
+      {status === "loading" && <PrayerTimesSkeleton />}
+      {status === "ready" ? (
         <>
           <PrayerTimesCard coordinates={coordinates} />
           <Footer
@@ -47,7 +41,7 @@ export default function IndexPopup() {
         <FooterSkeleton />
       )}
 
-      {status === "idle" && !loadingCoordinates && (
+      {status === "idle" && (
         <div className="text-center">
           <p className="text-gray-300">
             {chrome.i18n.getMessage("locationAccessRequired")}

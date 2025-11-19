@@ -1,7 +1,7 @@
 import "@/styles.css"
 
 import { DIR } from "@/constants/direction"
-import { debounce } from "@/lib/debounce"
+import { debounceAsync } from "@/lib/debounce-aync"
 import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
@@ -36,15 +36,15 @@ export default function Options() {
         setSearchResults(null)
         return
       }
+
       try {
         setIsLoading(true)
         setError(null)
-        setSearchResults(null)
 
         const data = await searchCity(searchQuery, signal)
         setSearchResults(data.length > 0 ? data : [])
-      } catch (err) {
-        console.error(err)
+      } catch (error) {
+        if (signal?.aborted) return
         setError("Failed to fetch location suggestions.")
         setSearchResults(null)
       } finally {
@@ -54,21 +54,22 @@ export default function Options() {
     []
   )
 
-  const debouncedSearch = debounce(performSearch, 500)
+  const debouncedSearch = debounceAsync(performSearch, 500)
 
   useEffect(() => {
     if (!autoLocation && cityInput && cityInput !== manualLocation?.address) {
-      debouncedSearch(cityInput, reverseControllerRef.current?.signal)
+      debouncedSearch(cityInput)
     } else {
       setSearchResults(null)
     }
   }, [cityInput, manualLocation, autoLocation])
 
   useEffect(() => {
+    if (autoLocation) return
     if (manualLocation?.address) {
       setCityInput(manualLocation.address)
     }
-  }, [manualLocation?.address])
+  }, [manualLocation?.address, autoLocation])
 
   const handleSelectLocation = (result: NominatimResult) => {
     setManualLocation({
