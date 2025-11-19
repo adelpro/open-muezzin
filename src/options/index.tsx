@@ -1,14 +1,12 @@
 import "@/styles.css"
 
 import { DIR } from "@/constants/direction"
-import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { debounce } from "@/lib/debounce"
+import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import Logo from "url:~/assets/icon512.png"
-
-
 
 export default function Options() {
   const {
@@ -65,6 +63,12 @@ export default function Options() {
       setSearchResults(null)
     }
   }, [cityInput, manualLocation, autoLocation])
+
+  useEffect(() => {
+    if (manualLocation?.address) {
+      setCityInput(manualLocation.address)
+    }
+  }, [manualLocation?.address])
 
   const handleSelectLocation = (result: NominatimResult) => {
     setManualLocation({
