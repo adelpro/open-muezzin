@@ -1,18 +1,14 @@
 import "@/styles.css"
 
 import { DIR } from "@/constants/direction"
-import { NOMINATIM_API_URL } from "@/constants/nominate-api-url"
+import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { debounce } from "@/lib/debounce"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import Logo from "url:~/assets/icon512.png"
 
-type NominatimResult = {
-  lat: string
-  lon: string
-  display_name: string
-}
+
 
 export default function Options() {
   const {
@@ -47,21 +43,7 @@ export default function Options() {
         setError(null)
         setSearchResults(null)
 
-        const lang = chrome.i18n.getUILanguage() || "ar"
-
-        const res = await fetch(
-          `${NOMINATIM_API_URL}/search?format=json&q=${encodeURIComponent(
-            searchQuery
-          )}&limit=5&accept-language=${lang}`,
-          {
-            headers: { "User-Agent": "Open-Muezzin-Extension/1.0" },
-            signal
-          }
-        )
-
-        if (!res.ok) throw new Error("Network response was not ok")
-
-        const data: NominatimResult[] = await res.json()
+        const data = await searchCity(searchQuery, signal)
         setSearchResults(data.length > 0 ? data : [])
       } catch (err) {
         console.error(err)

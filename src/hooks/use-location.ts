@@ -1,4 +1,4 @@
-import { NOMINATIM_API_URL } from "@/constants/nominate-api-url"
+import { reverseGeocode as reverseGeocodeAPI } from "@/lib/location-service"
 import { useSettingsStore } from "@/stores/settings-store"
 import type { Coordinates } from "adhan"
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -13,35 +13,7 @@ export function useLocation(fallback: Coordinates) {
   const [loadingCoordinates, setLoadingCoordinates] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const lastGeocodedRef = useRef<string | null>(null)
   const reverseControllerRef = useRef<AbortController | null>(null)
-
-  const reverseGeocode = useCallback(
-    async (coords: Coordinates, signal?: AbortSignal) => {
-      const key = `${coords.latitude.toFixed(6)},${coords.longitude.toFixed(6)}`
-      if (lastGeocodedRef.current === key) return
-      lastGeocodedRef.current = key
-
-      try {
-        const lang = chrome.i18n.getUILanguage() || "ar"
-        const res = await fetch(
-          `${NOMINATIM_API_URL}/reverse?format=json&accept-language=${lang}&lat=${coords.latitude}&lon=${coords.longitude}`,
-          { headers: { "User-Agent": "Open-Muezzin-Extension/1.0" }, signal }
-        )
-        const data = await res.json()
-        setAddress(
-          data.address?.city ||
-          data.address?.town ||
-          data.display_name ||
-          "Unknown location"
-        )
-      } catch {
-        if (signal?.aborted) return
-        setAddress("Unknown location")
-      }
-    },
-    []
-  )
 
   const setFromBrowser = useCallback(() => {
     setLoadingCoordinates(true)
@@ -63,9 +35,36 @@ export function useLocation(fallback: Coordinates) {
         }
         setCoordinates(coords)
 
+        // Check if we have a cached address for these coordinates
+        const { cachedCoordinates } = useSettingsStore.getState()
+        if (
+          cachedCoordinates &&
+          Math.abs(cachedCoordinates.coordinates.latitude - coords.latitude) < 0.0001 &&
+          Math.abs(cachedCoordinates.coordinates.longitude - coords.longitude) < 0.0001
+        ) {
+          setAddress(cachedCoordinates.address)
+          setStatus("ready")
+          setLoadingCoordinates(false)
+          return
+        }
+
         if (reverseControllerRef.current) reverseControllerRef.current.abort()
         reverseControllerRef.current = new AbortController()
-        void reverseGeocode(coords, reverseControllerRef.current.signal)
+
+        void (async () => {
+          try {
+            const cityName = await reverseGeocodeAPI(coords, reverseControllerRef.current?.signal)
+            setAddress(cityName)
+            setCachedCoordinates({
+              coordinates: coords,
+              address: cityName
+            })
+          } catch (e) {
+            if ((e as Error).name !== 'AbortError') {
+              setAddress("Unknown location")
+            }
+          }
+        })()
 
         setStatus("ready")
         setLoadingCoordinates(false)
@@ -79,7 +78,7 @@ export function useLocation(fallback: Coordinates) {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     )
-  }, [reverseGeocode])
+  }, [setCachedCoordinates])
 
   const setFromStore = useCallback(() => {
     if (!manualLocation) {
@@ -90,7 +89,9 @@ export function useLocation(fallback: Coordinates) {
 
       if (reverseControllerRef.current) reverseControllerRef.current.abort()
       reverseControllerRef.current = new AbortController()
-      void reverseGeocode(fallback, reverseControllerRef.current.signal)
+      void reverseGeocodeAPI(fallback, reverseControllerRef.current.signal)
+        .then(setAddress)
+        .catch(() => setAddress("Unknown location"))
       return
     }
 
@@ -98,11 +99,7 @@ export function useLocation(fallback: Coordinates) {
     setAddress(manualLocation.address)
     setStatus("ready")
     setError(null)
-  }, [manualLocation, fallback, reverseGeocode])
-
-  useEffect(() => {
-    if (coordinates) setCachedCoordinates(coordinates)
-  }, [coordinates, setCachedCoordinates])
+  }, [manualLocation, fallback])
 
   useEffect(() => {
     if (autoLocation) {
@@ -111,7 +108,6 @@ export function useLocation(fallback: Coordinates) {
           .query({ name: "geolocation" as PermissionName })
           .then((perm) => {
             if (perm.state === "granted" || perm.state === "prompt") {
-              // FIXED: trigger prompt immediately
               setFromBrowser()
             } else {
               setCoordinates(fallback)
@@ -123,7 +119,9 @@ export function useLocation(fallback: Coordinates) {
               if (reverseControllerRef.current)
                 reverseControllerRef.current.abort()
               reverseControllerRef.current = new AbortController()
-              void reverseGeocode(fallback, reverseControllerRef.current.signal)
+              void reverseGeocodeAPI(fallback, reverseControllerRef.current.signal)
+                .then(setAddress)
+                .catch(() => setAddress("Unknown location"))
             }
           })
           .catch(() => setFromBrowser())
@@ -137,7 +135,7 @@ export function useLocation(fallback: Coordinates) {
     return () => {
       if (reverseControllerRef.current) reverseControllerRef.current.abort()
     }
-  }, [autoLocation, manualLocation, fallback, setFromBrowser, setFromStore, reverseGeocode])
+  }, [autoLocation, manualLocation, fallback, setFromBrowser, setFromStore])
 
   const requestLocation = useCallback(() => setFromBrowser(), [setFromBrowser])
 

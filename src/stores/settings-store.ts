@@ -12,13 +12,13 @@ export type SettingsState = {
   manualLocation?: Location
   autoLocation: boolean
   twentyFourHourFormat?: boolean
-  cachedCoordinates?: Coordinates
+  cachedCoordinates?: Location
 
   setCalculationMethod: (method: keyof typeof CalculationMethod) => void
   setManualLocation: (location: Location) => void
   setAutoLocation: (value: boolean) => void
   setTwentyFourHourFormat: (value: boolean) => void
-  setCachedCoordinates: (coords: Coordinates) => void
+  setCachedCoordinates: (location: Location) => void
 
 }
 
@@ -36,7 +36,7 @@ export const useSettingsStore = create<SettingsState>()(
       setManualLocation: (location) => set({ manualLocation: location }),
       setAutoLocation: (value) => set({ autoLocation: value }),
       setTwentyFourHourFormat: (value) => set({ twentyFourHourFormat: value }),
-      setCachedCoordinates: (coords) => set({ cachedCoordinates: coords }),
+      setCachedCoordinates: (location) => set({ cachedCoordinates: location }),
 
     }),
     {
