@@ -1,1 +1,1 @@
-export const BADGE_WINDOW_MINUTES = 100
+export const BADGE_WINDOW_MINUTES = 15

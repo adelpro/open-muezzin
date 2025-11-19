@@ -90,39 +90,7 @@ async function updatePrayerBadge() {
     )
     showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
 
-    // Notification Logic
-    if (notificationsEnabled && diffMinutes === 0) {
-      // Check if we already notified for this prayer today
-      const prayerKey = `${closestPrayer.name}-${now.getDate()}`
-      if (lastNotifiedPrayer !== prayerKey) {
-        console.log("Prayer time notification fired for", closestPrayer.name)
 
-        const notificationOptions = {
-          type: "basic" as const,
-          iconUrl: chrome.runtime.getURL("assets/icon512.png"),
-          title: "Prayer Time",
-          message: `It's time for ${closestPrayer.name} prayer`,
-          priority: 2
-        }
-
-        // Use callback for cross-browser compatibility (Firefox/Chrome)
-        try {
-          chrome.notifications.create(
-            `prayer-${prayerKey}`,
-            notificationOptions,
-            (notificationId) => {
-              if (chrome.runtime.lastError) {
-                console.error("Notification error:", chrome.runtime.lastError)
-              } else {
-                lastNotifiedPrayer = prayerKey
-              }
-            }
-          )
-        } catch (e) {
-          console.error("Failed to create notification", e)
-        }
-      }
-    }
   } else {
     hideBadge()
   }
