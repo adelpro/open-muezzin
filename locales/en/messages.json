@@ -71,10 +71,6 @@
     "message": "Use 24 Hour Format",
     "description": "Toggle label for 24-hour time format."
   },
-  "enableNotifications": {
-    "message": "Enable Notifications",
-    "description": "Toggle label for enabling notifications."
-  },
   "useAutoLocation": {
     "message": "Use Auto Location",
     "description": "Toggle label for auto location option."

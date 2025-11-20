@@ -1,11 +1,11 @@
 import "@/styles.css"
 
 import { DIR } from "@/constants/direction"
-import { debounceAsync } from "@/lib/debounce-aync"
+import { debounceAsync } from "@/lib/debounce-async"
 import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import Logo from "url:~/assets/icon512.png"
 
 export default function Options() {
@@ -17,12 +17,8 @@ export default function Options() {
     setManualLocation,
     setAutoLocation,
     twentyFourHourFormat,
-    setTwentyFourHourFormat,
-    notificationsEnabled,
-    setNotificationsEnabled
+    setTwentyFourHourFormat
   } = useSettingsStore()
-
-  const reverseControllerRef = useRef<AbortController | null>(null)
 
   const [cityInput, setCityInput] = useState(manualLocation?.address || "")
   const [isLoading, setIsLoading] = useState(false)
@@ -142,16 +138,6 @@ export default function Options() {
               className="w-5 h-5 rounded border-gray-300 text-primary-600"
             />
             {chrome.i18n.getMessage("use24HourFormat")}
-          </label>
-
-          <label className="flex gap-3 items-center">
-            <input
-              type="checkbox"
-              checked={notificationsEnabled}
-              onChange={() => setNotificationsEnabled(!notificationsEnabled)}
-              className="w-5 h-5 rounded border-gray-300 text-primary-600"
-            />
-            {chrome.i18n.getMessage("enableNotifications")}
           </label>
         </section>
 

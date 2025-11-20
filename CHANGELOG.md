@@ -3,11 +3,15 @@
 All notable changes to this project are documented below.  
 This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
-## [v0.0.3] - 2025-11-14
+## [v0.0.3] - 2025-11-20
 
 ### Features
 
-feat(ui): enhance typography and add multilingual support in the documentation
+- feat: add privacy policy pages for English and Arabic
+
+### Refactors
+
+- refactor: refactor the logic of location calculation to be more solid and simpler
 
 ## [v0.0.2] - 2025-11-09
 
