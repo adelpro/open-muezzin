@@ -44,6 +44,17 @@
   },
   "manifest": {
     "default_locale": "ar",
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/icon*.png"
+        ],
+        "matches": [
+          "http://localhost:3000/*",
+          "https://*.plasmo.com/*"
+        ]
+      }
+    ],
     "permissions": [
       "geolocation",
       "storage",

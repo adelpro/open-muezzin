@@ -27,6 +27,7 @@ function hideBadge() {
 }
 
 // Coordinates & Settings
+
 const getSettings = async (): Promise<{
   coordinates: Coordinates | null
   notificationsEnabled: boolean
@@ -42,7 +43,6 @@ const getSettings = async (): Promise<{
         const settings = JSON.parse(settingsRaw)
         const cachedCoordinates = settings.state?.cachedCoordinates ?? null
         const coordinates = cachedCoordinates.coordinates
-        console.log({ cachedCoordinates })
         const notificationsEnabled =
           settings.state?.notificationsEnabled ?? true
         resolve({ coordinates, notificationsEnabled, calculationMethod: settings.state?.calculationMethod ?? null })
@@ -68,10 +68,6 @@ async function updatePrayerBadge() {
   const method = CalculationMethod[calculationMethod as keyof typeof CalculationMethod]();
 
   const prayerTimes = new PrayerTimes(coordinates, now, method)
-
-  console.log({ prayerTimes })
-
-
 
   const prayers = PRAYER_ORDER.map((name) => ({
     name,
@@ -123,3 +119,25 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 // Initial check
 updatePrayerBadge()
+
+function showWelcomeNotification() {
+  const icon = chrome.runtime.getURL("assets/icon32.png")
+  chrome.notifications.create(
+    {
+      type: "basic",
+      iconUrl: icon,
+      title: "Welcome to Open Muezzin",
+      message: "The extension has been loaded successfully!",
+      priority: 2
+    },
+    (notificationId) => {
+      if (chrome.runtime.lastError) {
+        console.error("Notification error:", chrome.runtime.lastError)
+        return
+      }
+      console.log("Notification created with ID:", notificationId)
+    }
+  )
+}
+
+showWelcomeNotification()
