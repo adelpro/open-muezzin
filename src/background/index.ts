@@ -1,5 +1,6 @@
 import { BADGE_WINDOW_MINUTES } from "@/constants/badge-window-minutes"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
+import browser from "webextension-polyfill"
 
 const BADGE_COLOR = "#34d3c3"
 const CHECK_INTERVAL_MINUTES = 1
@@ -42,10 +43,17 @@ const getSettings = async (): Promise<{
       try {
         const settings = JSON.parse(settingsRaw)
         const cachedCoordinates = settings.state?.cachedCoordinates ?? null
-        const coordinates = cachedCoordinates.coordinates
+
+        // FIXED: Added null check for cachedCoordinates before accessing .coordinates
+        const coordinates = cachedCoordinates?.coordinates ?? null
+
         const notificationsEnabled =
           settings.state?.notificationsEnabled ?? true
-        resolve({ coordinates, notificationsEnabled, calculationMethod: settings.state?.calculationMethod ?? null })
+
+        // FIXED: Extracted to separate variable for clarity
+        const calculationMethod = settings.state?.calculationMethod ?? null
+
+        resolve({ coordinates, notificationsEnabled, calculationMethod })
       } catch (err) {
         console.error("Failed to parse settings", err)
         resolve({ coordinates: null, notificationsEnabled: true, calculationMethod: null })
@@ -65,7 +73,11 @@ async function updatePrayerBadge() {
     hideBadge()
     return
   }
-  const method = CalculationMethod[calculationMethod as keyof typeof CalculationMethod]();
+
+  // Use default method if none specified
+  const method = calculationMethod
+    ? CalculationMethod[calculationMethod]()
+    : CalculationMethod.MuslimWorldLeague()
 
   const prayerTimes = new PrayerTimes(coordinates, now, method)
 
@@ -73,7 +85,6 @@ async function updatePrayerBadge() {
     name,
     time: prayerTimes[name as keyof typeof prayerTimes] as Date
   }))
-
 
   const closestPrayer = prayers.find((prayer) => {
     const diffMinutes = (prayer.time.getTime() - now.getTime()) / 60000
@@ -84,26 +95,35 @@ async function updatePrayerBadge() {
     const diffMinutes = Math.floor(
       (closestPrayer.time.getTime() - now.getTime()) / 60000
     )
-    showBadge(`${diffMinutes >= 0 ? "-" : "+"}${Math.abs(diffMinutes)}`)
+    // Show countdown before prayer (positive numbers) and time passed after (with +)
+    const badgeText = diffMinutes >= 0
+      ? `-${Math.abs(diffMinutes)}`
+      : `+${Math.abs(diffMinutes)}`
+    showBadge(badgeText)
 
-
+    // Show Notification at prayer time
+    if (notificationsEnabled && diffMinutes === 0) {
+      // Prevent duplicate notifications
+      if (lastNotifiedPrayer !== closestPrayer.name) {
+        showNotification(closestPrayer.name)
+        lastNotifiedPrayer = closestPrayer.name
+      }
+    }
   } else {
     hideBadge()
   }
 }
 
 // Storage Change Listener
-// Storage listener: triggers on coordinates or settings change
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "local") return
   const change = changes["open-muezzin-settings"]
   if (!change) return
 
   try {
-    // We just update whenever settings change to be safe
     updatePrayerBadge()
-  } catch {
-    // ignore parse errors
+  } catch (err) {
+    console.error("Failed to update badge after settings change:", err)
   }
 })
 
@@ -120,24 +140,37 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 // Initial check
 updatePrayerBadge()
 
-function showWelcomeNotification() {
-  const icon = chrome.runtime.getURL("assets/icon32.png")
-  chrome.notifications.create(
-    {
-      type: "basic",
-      iconUrl: icon,
-      title: "Welcome to Open Muezzin",
-      message: "The extension has been loaded successfully!",
-      priority: 2
-    },
-    (notificationId) => {
-      if (chrome.runtime.lastError) {
-        console.error("Notification error:", chrome.runtime.lastError)
-        return
-      }
-      console.log("Notification created with ID:", notificationId)
+// Notifications
+function showNotification(prayerName: string): void {
+  const iconUrl = chrome.runtime.getURL("assets/icon32.png")
+  // Get localized prayer name 
+  const localizedPrayerName = chrome.i18n.getMessage(prayerName) || prayerName
+  // Get localized message "Time for {prayer}" 
+  const title = chrome.i18n.getMessage("extensionName") || "Prayer Time"
+  const message = chrome.i18n.getMessage("timeForPrayer", [localizedPrayerName]) || `Time for ${localizedPrayerName}`
+  const isFirefox = navigator.userAgent.includes("Firefox")
+  const notificationId = `prayer-${prayerName}-${Date.now()}`
+  const options: any = { type: "basic", iconUrl, title, message, priority: 2 }
+
+  // Chrome-specific: don't require interaction so notification auto-dismisses 
+  // Firefox doesn't support requireInteraction anyway 
+  if (!isFirefox) {
+    options.requireInteraction = true
+  }
+
+  chrome.notifications.create(notificationId, options, (notificationId) => {
+    if (chrome.runtime.lastError) { console.error("Notification error:", chrome.runtime.lastError) } else {
+      console.log("Notification shown with ID:", notificationId)
+      // Auto-clear notification after 10 seconds
+      setTimeout(() => { chrome.notifications.clear(notificationId, (wasCleared) => { if (wasCleared) { console.log("Notification auto-cleared:", notificationId) } }) }, 10000)
     }
-  )
+  })
 }
 
-showWelcomeNotification()
+// Test notification on install (remove in production) 
+chrome.runtime.onInstalled.addListener(() => {
+
+  setTimeout(() => {
+    showNotification("fajr")
+  }, 5000)
+})

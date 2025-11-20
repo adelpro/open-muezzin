@@ -13,11 +13,14 @@ export default function Options() {
     calculationMethod,
     manualLocation,
     autoLocation,
+    twentyFourHourFormat,
+    notificationsEnabled,
+
     setCalculationMethod,
     setManualLocation,
     setAutoLocation,
-    twentyFourHourFormat,
-    setTwentyFourHourFormat
+    setTwentyFourHourFormat,
+    setNotificationsEnabled
   } = useSettingsStore()
 
   const [cityInput, setCityInput] = useState(manualLocation?.address || "")
@@ -138,6 +141,16 @@ export default function Options() {
               className="w-5 h-5 rounded border-gray-300 text-primary-600"
             />
             {chrome.i18n.getMessage("use24HourFormat")}
+          </label>
+
+          <label className="flex gap-3 items-center">
+            <input
+              type="checkbox"
+              checked={notificationsEnabled}
+              onChange={() => setNotificationsEnabled(!notificationsEnabled)}
+              className="w-5 h-5 rounded border-gray-300 text-primary-600"
+            />
+            {chrome.i18n.getMessage("showNotifications")}
           </label>
         </section>
 

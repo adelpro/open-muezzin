@@ -118,5 +118,18 @@
   "extensionHome": {
     "message": "الصفحة الرئيسية",
     "description": "زر لفتح صفحة الرئيسية."
+  },
+  "timeForPrayer": {
+    "message": "حان وقت صلاة $PRAYER$",
+    "description": "رسالة إشعار لوقت الصلاة.",
+    "placeholders": {
+      "prayer": {
+        "content": "$1"
+      }
+    }
+  },
+  "showNotifications": {
+    "message": "إظهار الإشعارات",
+    "description": "تغيير خيار إظهار الإشعارات"
   }
 }

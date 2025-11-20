@@ -118,5 +118,18 @@
   "extensionHome": {
     "message": "Home",
     "description": "Link label to open extension home page."
+  },
+  "timeForPrayer": {
+    "message": "Time for $PRAYER$",
+    "description": "Notification message for prayer time.",
+    "placeholders": {
+      "prayer": {
+        "content": "$1"
+      }
+    }
+  },
+  "showNotifications": {
+    "message": "Show Notifications",
+    "description": "Toggle label for notifications option."
   }
 }
