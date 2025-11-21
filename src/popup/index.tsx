@@ -21,7 +21,10 @@ export default function IndexPopup() {
   return (
     <div className="relative flex flex-col items-center justify-center w-[600px] h-[600px]">
       <Header />
-      <div className="absolute top-1 end-1">
+      <div className="flex absolute top-1 justify-center items-center end-1">
+        <span className="text-xs text-gray-500">
+          v{chrome.runtime.getManifest().version}
+        </span>
         <SettingsButton />
       </div>
       {/* TODO add Adhan Player */}

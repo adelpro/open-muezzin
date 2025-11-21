@@ -12,13 +12,19 @@ type PrayerTimesCardProps = {
   coordinates: Coordinates
 }
 
+if (WINDOW_MINUTES <= 0 || WINDOW_MINUTES > 120) {
+  throw new Error(
+    `WINDOW_MINUTES is invalid (${WINDOW_MINUTES}). Must be between 1 and 120.`
+  )
+}
+
 export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
   const { calculationMethod, twentyFourHourFormat } = useSettingsStore()
   const method = CalculationMethod[calculationMethod]()
 
   const [now, setNow] = useState(new Date())
 
-  // Update current time every second
+  // Update time every second
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(interval)
@@ -35,61 +41,64 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
     isha: <Moon size={18} />
   }
 
-  // Only calculate times when coordinates are ready
+  // Calculate today prayer times
   const times: PrayerTimesData = useMemo(() => {
     const today = new Date()
-    const prayerTimes = new PrayerTimes(coordinates, today, method)
+    const pt = new PrayerTimes(coordinates, today, method)
     return {
-      fajr: prayerTimes.fajr,
-      sunrise: prayerTimes.sunrise,
-      dhuhr: prayerTimes.dhuhr,
-      asr: prayerTimes.asr,
-      maghrib: prayerTimes.maghrib,
-      isha: prayerTimes.isha
+      fajr: pt.fajr,
+      sunrise: pt.sunrise,
+      dhuhr: pt.dhuhr,
+      asr: pt.asr,
+      maghrib: pt.maghrib,
+      isha: pt.isha
     }
   }, [coordinates, method])
 
-  // Prepare prayer list including tomorrow's fajr
-  const prayers = useMemo(() => {
-    const list = prayerOrder.map((prayer) => ({
-      name: chrome.i18n.getMessage(prayer),
-      time: times[prayer as keyof PrayerTimesData] as Date
-    }))
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    list.push({
-      name: chrome.i18n.getMessage("Fajr"),
-      time: new PrayerTimes(coordinates, tomorrow, method).fajr
-    })
-    return list
-  }, [times, coordinates, method])
+  // Build prayers list
+  const prayers = useMemo(
+    () =>
+      prayerOrder.map((prayer) => ({
+        id: prayer,
+        name: chrome.i18n.getMessage(prayer),
+        time: times[prayer as keyof PrayerTimesData] as Date
+      })),
+    [times]
+  )
 
-  // Determine current and next prayer
+  // Determine current prayer inside window
   const currentPrayer =
-    prayers.find((prayer) => {
-      const windowStart = new Date(
-        prayer.time.getTime() - WINDOW_MINUTES * 60 * 1000
-      )
-      const windowEnd = new Date(
-        prayer.time.getTime() + WINDOW_MINUTES * 60 * 1000
-      )
-      return now >= windowStart && now <= windowEnd
+    prayers.find((p) => {
+      const start = new Date(p.time.getTime() - WINDOW_MINUTES * 60 * 1000)
+      const end = new Date(p.time.getTime() + WINDOW_MINUTES * 60 * 1000)
+      return now >= start && now <= end
     }) || null
 
+  // Determine next prayer (after current, if any)
   const nextPrayer = currentPrayer
-    ? prayers[prayers.indexOf(currentPrayer) + 1] || prayers[0]
-    : prayers.find((prayer) => prayer.time > now) || prayers[0]
+    ? prayers
+        .slice(prayers.indexOf(currentPrayer) + 1)
+        .find((p) => p.time > now) || null
+    : prayers.find((p) => p.time > now) || null
 
-  // Countdown function for both current and next prayer
-  const getCountdown = (prayerTime: Date, forNextPrayer = false) => {
-    let diffMs = prayerTime.getTime() - now.getTime() // time until prayer
+  // Countdown formatter
+  const getCountdown = (prayerTime: Date, isCurrent = false) => {
+    let diffMs: number
     let prefix = ""
-    if (!forNextPrayer) {
-      // For current prayer, show + / − based on window
-      prefix = diffMs < 0 ? "+" : "−"
-      diffMs = Math.abs(diffMs)
+
+    if (isCurrent) {
+      const start = new Date(prayerTime.getTime() - WINDOW_MINUTES * 60 * 1000)
+      const end = new Date(prayerTime.getTime() + WINDOW_MINUTES * 60 * 1000)
+      if (now < prayerTime) {
+        diffMs = prayerTime.getTime() - now.getTime()
+        prefix = "−"
+      } else {
+        diffMs = now.getTime() - prayerTime.getTime()
+        prefix = "+"
+      }
     } else {
-      // For next prayer, always show remaining time with −
+      // next prayer
+      diffMs = prayerTime.getTime() - now.getTime()
       prefix = "−"
     }
 
@@ -108,20 +117,20 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
         <ul className="space-y-2 divide-y divide-gray-100 dark:divide-gray-800">
           {prayerOrder.map((prayer) => {
             const time = times[prayer as keyof PrayerTimesData] as Date
-            const isCurrent = currentPrayer?.name === prayer
-            const isNext = nextPrayer?.name === prayer
+            const isCurrent = currentPrayer?.id === prayer
+            const isNext = nextPrayer?.id === prayer
 
             let timerDisplay = null
             if (isCurrent) {
               timerDisplay = (
                 <span className="px-3 py-1 font-mono text-xs text-white rounded-full shadow bg-primary">
-                  {getCountdown(time)}
+                  {getCountdown(time, true)}
                 </span>
               )
-            } else if (isNext) {
+            } else if (isNext && nextPrayer) {
               timerDisplay = (
                 <span className="px-3 py-1 font-mono text-xs rounded-full bg-accent/20 text-accent">
-                  {getCountdown(nextPrayer!.time, true)}
+                  {getCountdown(nextPrayer.time)}
                 </span>
               )
             }
