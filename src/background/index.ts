@@ -150,27 +150,23 @@ function showNotification(prayerName: string): void {
   const message = chrome.i18n.getMessage("timeForPrayer", [localizedPrayerName]) || `Time for ${localizedPrayerName}`
   const isFirefox = navigator.userAgent.includes("Firefox")
   const notificationId = `prayer-${prayerName}-${Date.now()}`
-  const options: any = { type: "basic", iconUrl, title, message, priority: 2 }
+  const options: any = { type: "basic", iconUrl, title, message }
 
   // Chrome-specific: don't require interaction so notification auto-dismisses 
   // Firefox doesn't support requireInteraction anyway 
   if (!isFirefox) {
-    options.requireInteraction = true
+    options.requireInteraction = true,
+      options.priority = 2
   }
 
   chrome.notifications.create(notificationId, options, (notificationId) => {
     if (chrome.runtime.lastError) { console.error("Notification error:", chrome.runtime.lastError) } else {
       console.log("Notification shown with ID:", notificationId)
+
       // Auto-clear notification after 10 seconds
       setTimeout(() => { chrome.notifications.clear(notificationId, (wasCleared) => { if (wasCleared) { console.log("Notification auto-cleared:", notificationId) } }) }, 10000)
     }
   })
 }
 
-// Test notification on install (remove in production) 
-chrome.runtime.onInstalled.addListener(() => {
 
-  setTimeout(() => {
-    showNotification("fajr")
-  }, 5000)
-})

@@ -1,15 +1,18 @@
 {
   "name": "open-muezzin",
   "displayName": "Open Muezzin",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Open-source prayer times & Athan extension. No tracking, no ads, universal browser support.",
   "author": "Adelpro <contact@adelpro.us.kg>",
   "scripts": {
-    "dev": "plasmo dev",
+    "dev:chrome": "plasmo dev",
     "dev:firefox": "plasmo dev --target=firefox",
-    "build": "plasmo build",
+    "build:chrome": "plasmo build",
     "build:firefox": "plasmo build --target=firefox-mv3",
-    "package": "plasmo package",
+    "build:all": "pnpm build:chrome && pnpm build:firefox",
+    "package:chrome": "pnpm build:chrome && plasmo package",
+    "package:firefox": "pnpm build:firefox && plasmo package --target=firefox-mv3",
+    "package:all": "pnpm package:chrome && pnpm package:firefox",
     "lint": "eslint . --ext .ts,.tsx",
     "clean": "rimraf .plasmo build"
   },
