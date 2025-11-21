@@ -1,7 +1,7 @@
 {
   "name": "open-muezzin",
   "displayName": "Open Muezzin",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Open-source prayer times & Athan extension. No tracking, no ads, universal browser support.",
   "author": "Adelpro <contact@adelpro.us.kg>",
   "scripts": {
