@@ -3,6 +3,12 @@
 All notable changes to this project are documented below.  
 This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
+## [v0.0.8] - 2025-11-23
+
+### Refactors
+
+- refactor: optimize prayer times calculation logic
+
 ## [v0.0.4] - 2025-11-21
 
 ### Features

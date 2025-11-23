@@ -1,6 +1,5 @@
 import { BADGE_WINDOW_MINUTES } from "@/constants/badge-window-minutes"
 import { CalculationMethod, Coordinates, PrayerTimes } from "adhan"
-import browser from "webextension-polyfill"
 
 const BADGE_COLOR = "#34d3c3"
 const CHECK_INTERVAL_MINUTES = 1

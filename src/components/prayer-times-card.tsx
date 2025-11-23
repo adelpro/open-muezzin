@@ -56,49 +56,29 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
     }
   }, [coordinates, method])
 
-  // Build prayers list
-  const prayers = useMemo(
+  // Precompute prayer windows
+  const prayerWindows = useMemo(
     () =>
-      prayerOrder.map((prayer) => ({
-        id: prayer,
-        name: chrome.i18n.getMessage(prayer),
-        time: times[prayer as keyof PrayerTimesData] as Date
-      })),
+      prayerOrder.map((prayer) => {
+        const time = times[prayer as keyof PrayerTimesData] as Date
+        const start = new Date(time.getTime() - WINDOW_MINUTES * 60_000)
+        const end = new Date(time.getTime() + WINDOW_MINUTES * 60_000)
+        return { prayer, time, start, end }
+      }),
     [times]
   )
 
-  // Determine current prayer inside window
-  const currentPrayer =
-    prayers.find((prayer) => {
-      const start = new Date(prayer.time.getTime() - WINDOW_MINUTES * 60 * 1000)
-      const end = new Date(prayer.time.getTime() + WINDOW_MINUTES * 60 * 1000)
-      return now >= start && now <= end
-    }) || null
-
-  // Determine next prayer (after current, if any)
-  const nextPrayer = currentPrayer
-    ? prayers
-        .slice(prayers.indexOf(currentPrayer) + 1)
-        .find((prayer) => prayer.time > now) || null
-    : prayers.find((prayer) => prayer.time > now) || null
-
   // Countdown formatter
-  const getCountdown = (prayerTime: Date, isCurrent = false) => {
+  const getCountdown = (prayerTime: Date) => {
     let diffMs: number
     let prefix = ""
 
-    if (isCurrent) {
-      if (now < prayerTime) {
-        diffMs = prayerTime.getTime() - now.getTime()
-        prefix = "−"
-      } else {
-        diffMs = now.getTime() - prayerTime.getTime()
-        prefix = "+"
-      }
-    } else {
-      // next prayer
+    if (now < prayerTime) {
       diffMs = prayerTime.getTime() - now.getTime()
       prefix = "−"
+    } else {
+      diffMs = now.getTime() - prayerTime.getTime()
+      prefix = "+"
     }
 
     const hours = Math.floor(diffMs / 3600000)
@@ -114,37 +94,9 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
     <div className="mx-auto w-full max-w-sm" dir={DIR}>
       <div className="p-4 w-full text-gray-900 bg-white rounded-2xl border border-gray-200 shadow-lg dark:bg-gray-900 dark:border-gray-800 dark:text-gray-100">
         <ul className="space-y-2 divide-y divide-gray-100 dark:divide-gray-800">
-          {prayerOrder.map((prayer) => {
-            const time = times[prayer as keyof PrayerTimesData] as Date
-
-            // guard per-prayer window
-            const start = new Date(time.getTime() - WINDOW_MINUTES * 60_000)
-            const end = new Date(time.getTime() + WINDOW_MINUTES * 60_000)
-
-            const isCurrent =
-              now.getTime() >= start.getTime() && now.getTime() <= end.getTime()
-
-            const isNext =
-              nextPrayer?.id === prayer &&
-              nextPrayer.time.getTime() > now.getTime() && // must be in the future
-              nextPrayer.time.getTime() >= start.getTime()
-
-            let timerDisplay = null
-            if (isCurrent) {
-              console.log("isCurrent", time)
-              timerDisplay = (
-                <span className="px-3 py-1 font-mono text-xs text-white rounded-full shadow bg-primary">
-                  {getCountdown(time, true)}
-                </span>
-              )
-            } else if (isNext) {
-              console.log("isNext", time)
-              timerDisplay = (
-                <span className="px-3 py-1 font-mono text-xs rounded-full bg-accent/20 text-accent">
-                  {getCountdown(time)}
-                </span>
-              )
-            }
+          {prayerWindows.map(({ prayer, time, start, end }) => {
+            const isCurrent = now >= start && now <= end
+            const countdown = isCurrent ? getCountdown(time) : null
 
             return (
               <li
@@ -159,9 +111,13 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
                   <span>{chrome.i18n.getMessage(prayer)}</span>
                 </div>
 
-                <span className="flex flex-1 justify-center">
-                  {timerDisplay}
-                </span>
+                {isCurrent && (
+                  <span className="flex flex-1 justify-center">
+                    <span className="px-3 py-1 font-mono text-xs text-white rounded-full shadow bg-primary">
+                      {countdown}
+                    </span>
+                  </span>
+                )}
 
                 <span className="font-mono text-right text-gray-700">
                   {time.toLocaleTimeString([], {
