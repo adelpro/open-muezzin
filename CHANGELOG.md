@@ -3,6 +3,12 @@
 All notable changes to this project are documented below.  
 This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
+## [v0.0.9] - 2025-11-23
+
+### Fixes
+
+- fix: fixed privacy link in the options page with correct language, and fixed bug in the manifest matches array
+
 ## [v0.0.8] - 2025-11-23
 
 ### Refactors
