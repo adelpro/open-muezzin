@@ -56,6 +56,9 @@ export default function Options() {
   )
 
   const debouncedSearch = debounceAsync(performSearch, 500)
+  const shortLanguage = (chrome.i18n.getUILanguage() ?? "en")
+    .split("-")[0]
+    .toLowerCase()
 
   useEffect(() => {
     if (!autoLocation && cityInput && cityInput !== manualLocation?.address) {
@@ -249,7 +252,13 @@ export default function Options() {
           </a>
 
           <a
-            href={chrome.runtime.getURL("privacy.html")}
+            href={
+              shortLanguage === "ar"
+                ? "https://openmuezzin.adelpro.us.kg/ar/privacy"
+                : "https://openmuezzin.adelpro.us.kg/privacy"
+            }
+            target="_blank"
+            rel="noopener noreferrer"
             className="hover:text-primary-600 hover:underline">
             {chrome.i18n.getMessage("privacyPolicy")}
           </a>
