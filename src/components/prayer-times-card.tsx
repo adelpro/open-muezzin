@@ -12,6 +12,7 @@ type PrayerTimesCardProps = {
   coordinates: Coordinates
 }
 
+// Validate window minutes
 if (WINDOW_MINUTES <= 0 || WINDOW_MINUTES > 120) {
   throw new Error(
     `WINDOW_MINUTES is invalid (${WINDOW_MINUTES}). Must be between 1 and 120.`
@@ -68,9 +69,9 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
 
   // Determine current prayer inside window
   const currentPrayer =
-    prayers.find((p) => {
-      const start = new Date(p.time.getTime() - WINDOW_MINUTES * 60 * 1000)
-      const end = new Date(p.time.getTime() + WINDOW_MINUTES * 60 * 1000)
+    prayers.find((prayer) => {
+      const start = new Date(prayer.time.getTime() - WINDOW_MINUTES * 60 * 1000)
+      const end = new Date(prayer.time.getTime() + WINDOW_MINUTES * 60 * 1000)
       return now >= start && now <= end
     }) || null
 
@@ -78,8 +79,8 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
   const nextPrayer = currentPrayer
     ? prayers
         .slice(prayers.indexOf(currentPrayer) + 1)
-        .find((p) => p.time > now) || null
-    : prayers.find((p) => p.time > now) || null
+        .find((prayer) => prayer.time > now) || null
+    : prayers.find((prayer) => prayer.time > now) || null
 
   // Countdown formatter
   const getCountdown = (prayerTime: Date, isCurrent = false) => {
@@ -87,8 +88,6 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
     let prefix = ""
 
     if (isCurrent) {
-      const start = new Date(prayerTime.getTime() - WINDOW_MINUTES * 60 * 1000)
-      const end = new Date(prayerTime.getTime() + WINDOW_MINUTES * 60 * 1000)
       if (now < prayerTime) {
         diffMs = prayerTime.getTime() - now.getTime()
         prefix = "−"
@@ -117,20 +116,32 @@ export function PrayerTimesCard({ coordinates }: PrayerTimesCardProps) {
         <ul className="space-y-2 divide-y divide-gray-100 dark:divide-gray-800">
           {prayerOrder.map((prayer) => {
             const time = times[prayer as keyof PrayerTimesData] as Date
-            const isCurrent = currentPrayer?.id === prayer
-            const isNext = nextPrayer?.id === prayer
+
+            // guard per-prayer window
+            const start = new Date(time.getTime() - WINDOW_MINUTES * 60_000)
+            const end = new Date(time.getTime() + WINDOW_MINUTES * 60_000)
+
+            const isCurrent =
+              now.getTime() >= start.getTime() && now.getTime() <= end.getTime()
+
+            const isNext =
+              nextPrayer?.id === prayer &&
+              nextPrayer.time.getTime() > now.getTime() && // must be in the future
+              nextPrayer.time.getTime() >= start.getTime()
 
             let timerDisplay = null
             if (isCurrent) {
+              console.log("isCurrent", time)
               timerDisplay = (
                 <span className="px-3 py-1 font-mono text-xs text-white rounded-full shadow bg-primary">
                   {getCountdown(time, true)}
                 </span>
               )
-            } else if (isNext && nextPrayer) {
+            } else if (isNext) {
+              console.log("isNext", time)
               timerDisplay = (
                 <span className="px-3 py-1 font-mono text-xs rounded-full bg-accent/20 text-accent">
-                  {getCountdown(nextPrayer.time)}
+                  {getCountdown(time)}
                 </span>
               )
             }
