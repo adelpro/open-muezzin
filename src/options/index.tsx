@@ -5,7 +5,7 @@ import { debounceAsync } from "@/lib/debounce-async"
 import { searchCity, type NominatimResult } from "@/lib/location-service"
 import { useSettingsStore } from "@/stores/settings-store"
 import { CalculationMethod } from "adhan"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import Logo from "url:~/assets/icon512.png"
 
 export default function Options() {
@@ -55,18 +55,25 @@ export default function Options() {
     []
   )
 
-  const debouncedSearch = debounceAsync(performSearch, 500)
+  const debouncedSearch = useMemo(
+    () => debounceAsync(performSearch, 500),
+    [performSearch]
+  )
   const shortLanguage = (chrome.i18n.getUILanguage() ?? "en")
     .split("-")[0]
     .toLowerCase()
 
   useEffect(() => {
+    const controller = new AbortController()
+
     if (!autoLocation && cityInput && cityInput !== manualLocation?.address) {
-      debouncedSearch(cityInput)
+      debouncedSearch(cityInput, controller.signal)
     } else {
       setSearchResults(null)
     }
-  }, [cityInput, manualLocation, autoLocation])
+
+    return () => controller.abort()
+  }, [cityInput, manualLocation, autoLocation, debouncedSearch])
 
   useEffect(() => {
     if (autoLocation) return

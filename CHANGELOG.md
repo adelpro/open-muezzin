@@ -3,11 +3,18 @@
 All notable changes to this project are documented below.  
 This follows [Conventional Commits](https://www.conventionalcommits.org/) style.
 
+## [v0.1.0] - 2026-01-04
+
+### Fixes
+
+- fix: fixed search debounce issue and avoid unnecessary API calls.
+
 ## [v0.0.9] - 2025-11-23
 
 ### Fixes
 
-- fix: fixed privacy link in the options page with correct language, and fixed bug in the manifest matches array
+- fix: fixed privacy link in the options page with correct language,
+  and fixed bug in the manifest matches array
 
 ## [v0.0.8] - 2025-11-23
 
